@@ -31,7 +31,7 @@
 			"identifier" : "twitch_integration_mod_updates",
 			"host": 
 			{
-				"meta": "https://raw.githubusercontent.com/TheTankDivison/TwitchIntegrationMod/Download/meta.json?token=ASQZC7VITTLG5OD2KAU2SEDABAT24"
+				"meta": "https://github.com/TheTankDivison/TwitchIntegrationMod/raw/auto-updates/meta_data.json"
 			}
 		}
 	]
