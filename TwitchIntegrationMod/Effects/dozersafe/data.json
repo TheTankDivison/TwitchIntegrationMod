@@ -1,0 +1,15 @@
+{
+	"id": "dozersafe",
+	"Name":"Dozer safe",
+	"Description":"Activates dozer safe event"
+	"TIM":
+	{
+		"immortal":
+		{
+			"Name":"Immortal time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":0
+		}
+	}
+}

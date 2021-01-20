@@ -1,0 +1,794 @@
+--[[
+--[[Hooks:PostHook(ChatGui, "receive_message", "receive_message_TW", function(self, name, message, color, icon)
+--ChatGui._emotions[1]=
+	local icon_bitmap = nil
+	local x = 0
+	--local hud = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
+	local output_panel = self._panel:child("output_panel")--    ChatGui._panel:child("output_panel")
+	if icon then
+		local icon_texture, icon_texture_rect = tweak_data.hud_icons:get_icon_data(icon)
+		icon_bitmap = output_panel:bitmap({
+			y = 1,
+			texture = icon_texture,
+			texture_rect = icon_texture_rect,
+			color = color,
+			visible = false
+		})
+		x = icon_bitmap:right()
+		icon_bitmap:parent():remove(icon_bitmap)
+	end
+	
+	
+	local emote_bitmap=nil
+	local icon_tw = nil
+	local mas = {1}
+	
+	if name:find("0TW0") then
+		name=name:gsub("0TW0", "", 1)
+		icon_tw = output_panel:bitmap({
+			y = 0,
+			name ="twitch_icon",
+			texture = "guis/textures/Emotes/TwitchIcon",
+			w = ChatGui.line_height-6,
+			h = ChatGui.line_height-6, 
+			x= 0,
+			color = Color(1,1,1)
+		})
+		x = icon_tw:right()
+		mas[#mas+1] = icon_tw
+	end
+	
+	if name:find("0IsBroadcaster0") then
+		name=name:gsub("0IsBroadcaster0","",1)
+	
+		emote_bitmap = output_panel:bitmap({
+			visible = true,
+			name ="twitch_icon",
+			texture = "guis/textures/Emotes/broadcaster_1",
+			layer = 0,
+			alpha=1,
+			color = Color(1, 1, 1),
+			w = ChatGui.line_height-6,
+			h = ChatGui.line_height-6,
+			blend_mode = "add",
+			x = x+4,
+			y =0--line_temp:world_y() --ChatGui.line_height-line_temp:h()
+		})
+		mas[#mas+1]=emote_bitmap
+		x = emote_bitmap:right()+2
+		emote_bitmap=nil
+	elseif name:find("0IsModerator0") then
+		name=name:gsub("0IsModerator0","",1)
+	
+		emote_bitmap = output_panel:bitmap({
+			visible = true,
+			name ="twitch_icon",
+			texture = "guis/textures/Emotes/moderator_1",
+			layer = 0,
+			alpha=1,
+			color = Color(1, 1, 1),
+			w = ChatGui.line_height-6,
+			h = ChatGui.line_height-6,
+			blend_mode = "add",
+			x = x+4,
+			y =6--line_temp:world_y() --ChatGui.line_height-line_temp:h()
+		})
+		mas[#mas+1]=emote_bitmap
+		x = emote_bitmap:right()+2
+		emote_bitmap=nil
+	end
+	--local len = utf8.len(name) + 1
+	local number_of_spaces = 0
+	local string_spaces = " "
+	local mess_arr = message:split(" ")
+	message=""
+	local space_word = self._panel:text({
+		halign = "left",	
+		name = "space_word",
+		vertical = "top",
+		hvertical = "top",
+		wrap = true,
+		visible = false,
+		align = "left",
+		blend_mode = "normal",
+		word_wrap = true,
+		y = 0,
+		layer = 0,
+		text = " ",
+		font = tweak_data.menu.pd2_small_font,
+		font_size = tweak_data.menu.pd2_small_font_size,
+		x = x,
+		color = color
+	})
+				
+	local _, _, space_ww, _ = space_word:text_rect()
+	self._panel:remove(self._panel:child("space_word"))
+	
+	number_of_spaces = math.ceil((ChatGui.line_height-6)/space_ww)+1
+	string_spaces = string_spaces:rep(number_of_spaces)
+	local numbers = {}
+
+	local all_numbers= {}
+	local line_one_word = self._panel:text({
+		halign = "left",	
+		name = "line_one_word",
+		vertical = "top",
+		hvertical = "top",
+		wrap = true,
+		visible = false,
+		align = "left",
+		blend_mode = "normal",
+		word_wrap = true,
+		y = 0,
+		layer = 0,
+		text = name..": ",
+		font = tweak_data.menu.pd2_small_font,
+		font_size = tweak_data.menu.pd2_small_font_size,
+		x = x,
+		color = color
+	})
+	local _, _, dlina, _ = line_one_word:text_rect()
+	self._panel:remove(self._panel:child(line_one_word:name()))
+	line_one_word = nil
+    local number_of_line = 1
+----------------------------------------------------------------------------------for
+	for i = 1, #mess_arr do
+		if ChatGui.list_of_files[mess_arr[i]]--[[ then
+			local name_of_emote = mess_arr[i]
+			
+			emote_bitmap = output_panel:bitmap({
+				name = tostring(number_of_line),			
+				visible = true,
+				texture = "guis/textures/Emotes/"..name_of_emote,
+				layer = 0,
+				alpha=1,
+				color = Color(1, 1, 1),
+				w = ChatGui.line_height-4,
+				h = ChatGui.line_height-4,
+				blend_mode = "add",
+				x =x+dlina,
+				y =0
+			})
+			emote_bitmap:set_top(self._input_panel:top())
+			
+			mas[#mas+1]=emote_bitmap
+			mess_arr[i]=string_spaces
+			emote_bitmap=nil
+		end
+		message=message.." "..mess_arr[i]
+		line_one_word = self._panel:text({
+			halign = "left",	
+			name = "line_one_word1",
+			vertical = "top",
+			hvertical = "top",
+			wrap = true,
+			visible = false,
+			align = "left",
+			blend_mode = "normal",
+			word_wrap = true,
+			y = 0,
+			layer = 0,
+			text =" ".. mess_arr[i],
+			font = tweak_data.menu.pd2_small_font,
+			font_size = tweak_data.menu.pd2_small_font_size,
+			x = x,
+			color = color
+		})
+		local _, _, part_mess_ww, _ = line_one_word:text_rect()	
+		line_one_word:set_kern(line_one_word:kern())		
+		line_one_word:set_w(output_panel:w() - line_one_word:left())
+		local _, _, part_mess_ww1, _ = line_one_word:text_rect()
+		line_one_word:set_h(part_mess_ww1)	
+		self._panel:remove(self._panel:child(line_one_word:name()))		
+		dlina = dlina + part_mess_ww			
+		if dlina > output_panel:w()- x then
+			number_of_line=number_of_line+1
+			while part_mess_ww > part_mess_ww1 do
+				part_mess_ww = part_mess_ww - part_mess_ww1
+				number_of_line=number_of_line+1
+			end
+			dlina = part_mess_ww
+		end
+		if dlina > output_panel:w() - x - (number_of_spaces*space_ww) then
+			local dl = dlina - (output_panel:w() - x)
+			dl = math.ceil(dl/space_ww)
+			dlina = 0
+			number_of_line = number_of_line + 1
+			local str = " "
+			str = str:rep(dl)
+			message = message..str
+		end
+	end
+	
+	local mess
+	--[[if VoidUI.options.enable_chat then
+		local pan = self._lines[#self._lines]["panel"]
+		--mess = pan:child("line")
+		pan:child("line"):set_text(name..":"..message)
+		pan:child("line"):set_x(x)
+		local len = utf8.len(name) + 1
+		local total_len = utf8.len(pan:child("line"):text())
+
+		pan:child("line"):set_range_color(0, len, color)
+		pan:child("line"):set_range_color(len, total_len, Color.white)
+		--pan:child("line")=mess
+		self._lines[#self._lines]["panel"] = pan
+		mas[1]=self._lines[#self._lines]["panel"]
+		--line_shadow:set_x(x)
+		]]
+	--else
+	
+		mess = self._lines[#self._lines][1]
+		mess:set_text(name..":"..message)
+		mess:set_x(x)
+		--mess:set_y(0)
+		local len = utf8.len(name) + 1
+		local total_len = utf8.len(mess:text())
+
+		mess:set_range_color(0, len, color)
+		mess:set_range_color(len, total_len, Color.white)
+		local _, _, w1, h11 = mess:text_rect()
+		local bg = self._lines[#self._lines][2]
+		bg:set_h(h11)
+		bg:set_w(w1 + mess:left() + 2)
+		self._lines[#self._lines][2]=bg
+		self._lines[#self._lines][1] = mess
+		mas[1]=self._lines[#self._lines][1]
+	--end
+	
+	
+	
+	--self._lines[#self._lines][2] = icon_bitmap
+	table.insert(ChatGui._emotions, mas)
+		--managers.hud:show_hint({text = tostring(ChatGui._emotions[#ChatGui._emotions][1]:top())})
+	for i = #ChatGui._emotions, 1, -1 do
+	
+		local line  = ChatGui._emotions[i][1]
+		--local = pan:child("line")
+		if #ChatGui._emotions[i] > 1 then
+			
+			
+			--local mass=ChatGui._emotions[i]
+			for j,v in pairs(ChatGui._emotions[i]) do
+			--for j=3, #mass, 1 do	
+				local Emote = ChatGui._emotions[i][j+1]
+				if Emote then
+					if Emote:name()=="twitch_icon" then
+						Emote:set_top(line:top() + 2.5)
+					else
+						
+						local n = tonumber(Emote:name())
+						Emote:set_top(line:top() + (ChatGui.line_height-1)*(n-1))  						
+					end		
+				end
+			end	
+		end		
+	end
+	
+end)
+]]
+--[[
+local player = managers.player:player_unit()
+--managers.player:local_player():sound():say("v21",true,true)
+
+local unit_done = World:spawn_unit(Idstring("units/payday2/characters/ene_bulldozer_1/ene_bulldozer_1"), player:position(), player:rotation())
+local M_groupAI = managers.groupai
+local AIState = M_groupAI:state()
+local team_id = tweak_data.levels:get_default_team_ID( unit_done:base():char_tweak().access == "gangster" and "gangster" or "combatant" )
+unit_done:movement():set_team( AIState:team_data( team_id ) )
+--unit_done:character_damage():set_health(300)
+--unit_done:character_damage():set_invulnerable(true)
+--unit_done:character_damage():set_immortal(true)
+	--camera:camera_unit():base():set_target_tilt(-720*2)
+	--camera:camera_unit():base():set_target_tilt(0)
+	--managers.player:player_unit():movement():current_state():
+--local interact_object = managers.player:player_unit():movement():current_state():get_interaction()
+--unit_done:character_damage():set_accuracy_multiplier(3)
+--unit_done:base():add_buff("base_damage", 0.5)
+--unit_done:damage():run_sequence_simple("dismember_head")
+local tt = {
+priority = 1,
+	color = tweak_data.contour.character.friendly_color
+}
+unit_done:contour():add("medic_heal")
+unit_done:set_visible(false)
+managers.chat:_receive_message(1, "ddd", tostring(unit_done:base():get_total_buff("base_damage")).."aa", Color('1565c0'))	
+]]
+--io.popen("start /I /MIN /INA /B mods/TwitchChannelPoints/Bot/BotTwitch.exe")
+--os.execute("start mods/TwitchChannelPoints/Bot/BotTwitch.exe")
+--os.execute("cmdow.exe payday2_win32_release.exe /ACT /TOP")
+--os.execute("cmdow.exe payday2_win32_release.exe /ACT /MAX")
+--os.execute("taskkill /IM BotTwitch.exe /F")
+	--local tweak = interact_object:interaction().tweak_data
+
+--		if interact_object == "corpse_alarm_pager" then
+		
+	--		managers.chat:_receive_message(1, "ddd", tostring("yeeees"), Color('1565c0'))	
+	--	end
+--	if managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2).panel:child("point_of_no_return_panel") then
+		
+--	end
+		--	local action_data = { type = "act", body_part = 1, variant = variant, align_sync = true }
+		--unit:brain():action_request(action_data)
+--[[ CarryData.POOF_CUSTOM_PARAMS
+local unit_name = Idstring("units/pickups/ammo/ammo_pickup")
+
+--local heisters = World:find_units("camera_cone", cone_camera, cone_center, cone_radius, tag_distance, heisters_slot_mask)
+local criminals = World:find_units_quick("all", managers.slot:get_mask("players"))
+--for _, criminal in pairs(criminals) do
+--managers.chat:_receive_message(1, "ddd", tostring(1), Color('1565c0'))
+	--criminal.unit():character_damage():restore_health(10, true)
+--end
+
+
+local all_peer = managers.network:session():all_peers()
+local all_players = managers.player:players()
+
+for _, peer in pairs(all_peer) do
+	local pp = peer:unit()
+	--local tema = managers.player:player_unit(peer)
+	--managers.chat:_receive_message(1, "ddd", tostring(peer:ip()), Color('1565c0'))
+	--pp:character_damage():restore_health(10, true)	
+	--local unit_done = World:spawn_unit(Idstring("units/payday2/architecture/bnk/bnk_int_fence_wall"), pp:position(), Rotation(pp:camera():rotation():yaw(), 0, 0))
+	managers.chat:_receive_message(1, "ddd", tostring(Rotation(pp:camera():rotation():yaw(), 0, 0)), Color('1565c0'))
+end]]
+--local peer = rpc:protocol_at_index(0) == "STEAM" and session:peer_by_user_id(rpc:ip_at_index(0)) or session:peer_by_ip(rpc:ip_at_index(0))
+
+--local tema = managers.player:player_unit(peer)
+--local unit_done = World:spawn_unit(Idstring("units/pickups/ammo/ammo_pickup"), tema:position(), tema:rotation())
+--
+--managers.chat:_receive_message(1, "ddd", tostring(1), Color('1565c0'))
+--[[]]
+
+--[[
+managers.network:session():send_to_peers_synched("restore_health", 10, true)
+	
+	
+	local player_eye = player:camera():position()
+	local player_fwd = player:camera():rotation():y()
+	local tagged = nil
+	local heisters_slot_mask = World:make_slot_mask(2, 3, 4, 5, 16, 24)
+	local cone_camera = player:camera():camera_object()
+	local cone_center = Vector3(0, 0)
+	local cone_radius = 1000
+	local tag_distance = 1000
+	local heisters = World:find_units("camera_cone", cone_camera, cone_center, cone_radius, tag_distance, heisters_slot_mask)
+	local best_dot = -1
+
+	for _, heister in ipairs(heisters) do
+		local heister_center = heister:oobb():center()
+		local heister_dir = heister_center - player_eye
+		local distance_pass = mvector3.length_sq(heister_dir) <= tag_distance * tag_distance
+		local raycast = nil
+
+		if distance_pass then
+			mvector3.normalize(heister_dir)
+
+			local heister_dot = Vector3.dot(player_fwd, heister_dir)
+
+			if best_dot < heister_dot then
+				best_dot = heister_dot
+				raycast = World:raycast(player_eye, heister_center)
+				tagged = raycast and raycast.unit:in_slot(heisters_slot_mask) and heister
+				local tag_id = managers.network:session():peer_by_unit(tagged):id()
+				managers.chat:_receive_message(1, "ddd", tostring(tagged), Color('1565c0'))
+				tag_id:character_damage():restore_health(10, true)
+				
+			end
+		end
+	end
+]]
+
+
+
+	--backuper:backup('tweak_data.player.movement_state.standard.movement.speed.RUNNING_MAX')
+	--T_speed.STANDARD_MAX =  150
+--[[
+	
+
+	
+	
+	
+	
+
+function HUDChat:receive_message(name, message, color, icon)
+
+	local output_panel = self._panel:child("output_panel")
+	local y =0
+	
+	local x = 0
+
+	local mas ={1,1}
+	local line
+
+	local icon_bitmap = nil
+	local emote_bitmap = nil
+	local hud = managers.hud:script( PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
+	
+	if icon then
+		local icon_texture, icon_texture_rect = tweak_data.hud_icons:get_icon_data(icon)
+		icon_bitmap = output_panel:bitmap({
+			y = 1,
+			texture = icon_texture,
+			texture_rect = icon_texture_rect,
+			color = color
+		})
+		x = icon_bitmap:right()
+	end
+	
+	if name:find("0TW0") then
+	name=name:gsub("0TW0", "", 1)
+	
+	icon_bitmap = output_panel:bitmap({
+			y = 0,
+			texture = "guis/textures/Emotes/TwitchIcon",
+			w = 18,
+			h = 18, 
+			x= 0,
+			color = Color(1,1,1)
+		})
+		x = icon_bitmap:right()
+	end
+	
+	
+	
+	
+	if name:find("0IsBroadcaster0") then
+	name=name:gsub("0IsBroadcaster0","",1)
+	
+	emote_bitmap = output_panel:bitmap({
+			visible = true,
+			name ="twitch_icon",
+			texture = "guis/textures/Emotes/broadcaster_1",
+			layer = 0,
+			alpha=1,
+			color = Color(1, 1, 1),
+			w = HUDChat.line_height-6,
+			h = HUDChat.line_height-6,
+			blend_mode = "add",
+			x = x+4,
+			y =0--line_temp:world_y() --HUDChat.line_height-line_temp:h()
+		})
+		mas[#mas+1]=emote_bitmap
+		x = emote_bitmap:right()+2
+		emote_bitmap=nil
+	end
+	
+	if name:find("0IsModerator0") then
+	name=name:gsub("0IsModerator0","",1)
+	
+	emote_bitmap = output_panel:bitmap({
+			visible = true,
+			name ="twitch_icon",
+			texture = "guis/textures/Emotes/moderator_1",
+			layer = 0,
+			alpha=1,
+			color = Color(1, 1, 1),
+			w = HUDChat.line_height-6,
+			h = HUDChat.line_height-6,
+			blend_mode = "add",
+			x = x+4,
+			y =6--line_temp:world_y() --HUDChat.line_height-line_temp:h()
+		})
+		mas[#mas+1]=emote_bitmap
+		x = emote_bitmap:right()+2
+		emote_bitmap=nil
+	end
+	local len = utf8.len(name) + 1
+	local number_of_spaces = 0
+	local string_spaces = " "
+	local mess_arr = message:split(" ")
+	message=""
+	local space_word = hud.panel:text({
+		halign = "left",	
+		name = "space_word",
+		vertical = "top",
+		hvertical = "top",
+		wrap = true,
+		visible = false,
+		align = "left",
+		blend_mode = "normal",
+		word_wrap = true,
+		y = 0,
+		layer = 0,
+		text = " ",
+		font = tweak_data.menu.pd2_small_font,
+		font_size = tweak_data.menu.pd2_small_font_size,
+		x = x,
+		color = color
+	})
+				
+	local _, _, space_ww, _ = space_word:text_rect()
+	hud.panel:remove(hud.panel:child("space_word"))
+	
+	number_of_spaces = math.ceil((HUDChat.line_height-6)/space_ww)
+	string_spaces = string_spaces:rep(number_of_spaces)
+
+	
+	local numbers = {}
+
+	local all_numbers= {}
+
+	
+	
+	--list_of_files=list_of_files:gsub(".texture", "")
+	--list_of_files="#"..list_of_files.."#"
+	local line_one_word = hud.panel:text({
+		halign = "left",	
+		name = "line_one_word",
+		vertical = "top",
+		hvertical = "top",
+		wrap = true,
+		visible = false,
+		align = "left",
+		blend_mode = "normal",
+		word_wrap = true,
+		y = 0,
+		layer = 0,
+		text = name..": ",
+		font = tweak_data.menu.pd2_small_font,
+		font_size = tweak_data.menu.pd2_small_font_size,
+		x = x,
+		color = color
+	})
+	local _, _, dlina, _ = line_one_word:text_rect()
+	hud.panel:remove(hud.panel:child(line_one_word:name()))
+	line_one_word = nil
+	
+    local number_of_line = 1
+----------------------------------------------------------------------------------for
+	for i = 1, #mess_arr do
+	--if not mess_arr[i]:find("%p") then
+		if list_of_files[mess_arr[i]]--[[ then
+			local name_of_emote = mess_arr[i]
+			
+			emote_bitmap = output_panel:bitmap({
+				name = tostring(number_of_line),			
+				visible = true,
+				texture = "guis/textures/Emotes/"..name_of_emote,
+				layer = 0,
+				alpha=1,
+				color = Color(1, 1, 1),
+				w = HUDChat.line_height-4,
+				h = HUDChat.line_height-4,
+				blend_mode = "add",
+				x =x+dlina,
+				y =0
+			})
+			emote_bitmap:set_top(self._input_panel:top())
+			
+				mas[#mas+1]=emote_bitmap
+				mess_arr[i]=string_spaces
+				
+			
+			emote_bitmap=nil
+		end
+		--end
+		message=message.." "..mess_arr[i]
+		line_one_word = hud.panel:text({
+			halign = "left",	
+			name = "line_one_word1",
+			vertical = "top",
+			hvertical = "top",
+			wrap = true,
+			visible = false,
+			align = "left",
+			blend_mode = "normal",
+			word_wrap = true,
+			y = 0,
+			layer = 0,
+			text =" ".. mess_arr[i],
+			font = tweak_data.menu.pd2_small_font,
+			font_size = tweak_data.menu.pd2_small_font_size,
+			x = x,
+			color = color
+		})
+		local _, _, part_mess_ww, _ = line_one_word:text_rect()	
+		line_one_word:set_kern(line_one_word:kern())
+		
+		line_one_word:set_w(output_panel:w() - line_one_word:left())
+		local _, _, part_mess_ww1, _ = line_one_word:text_rect()
+		line_one_word:set_h(part_mess_ww1)	
+		hud.panel:remove(hud.panel:child(line_one_word:name()))
+		
+		dlina = dlina + part_mess_ww
+			
+		if dlina > output_panel:w()- x then
+			number_of_line=number_of_line+1
+			while part_mess_ww > part_mess_ww1 do
+				part_mess_ww = part_mess_ww - part_mess_ww1
+				number_of_line=number_of_line+1
+				
+				
+			end
+			dlina = part_mess_ww
+		end
+		if dlina > output_panel:w() - x - (number_of_spaces*space_ww) then
+			local dl = dlina - (output_panel:w() - x) --+ (#string_spaces*space_ww)
+			dl = math.ceil(dl/space_ww)
+			dlina = 0-- dlina - (scroll_panel:w() - x)-- (#string_spaces*space_ww)
+			number_of_line = number_of_line + 1
+			local str = " "
+			str = str:rep(dl)
+			message = message..str
+		end
+
+	end
+		---------------
+
+	line = output_panel:text({
+		halign = "left",
+		vertical = "top",
+		hvertical = "top",
+		wrap = true,
+		align = "left",
+		blend_mode = "normal",
+		word_wrap = true,
+		y = 0,
+		layer = 0,
+		text = name .. ":" .. message,
+		font = tweak_data.menu.pd2_small_font,
+		font_size = tweak_data.menu.pd2_small_font_size,
+		x = x,
+		color = color
+	})
+	
+	local total_len = utf8.len(line:text())
+	line:set_range_color(0, len, color)
+	line:set_range_color(len, total_len, Color.white)
+	local _, _, _, h = line:text_rect()	
+
+	line:set_h(h)
+	mas[1]=line
+	if icon_bitmap then
+		mas[2]=icon_bitmap
+	end
+	table.insert(self._lines, mas)
+	line:set_kern(line:kern())
+	self:_layout_output_panel()
+
+	if not self._focus then
+		local output_panel = self._panel:child("output_panel")
+
+		output_panel:stop()
+		output_panel:animate(callback(self, self, "_animate_show_component"), output_panel:alpha())
+		output_panel:animate(callback(self, self, "_animate_fade_output"))
+	end
+	
+
+end
+
+--------------------------------------------------------------------
+
+function HUDChat:_layout_output_panel()
+	local output_panel = self._panel:child("output_panel")
+
+	output_panel:set_w(self._output_width)
+
+	local line_height = HUDChat.line_height
+	local lines = 0
+
+	for i = #self._lines, 1, -1 do
+		local line = self._lines[i][1]
+		local icon = self._lines[i][2]
+
+		line:set_w(output_panel:w() - line:left())
+
+		local _, _, w, h = line:text_rect()
+
+		line:set_h(h)
+
+		lines = lines + line:number_of_lines()
+	end
+
+	output_panel:set_h(line_height * math.min(10, lines))
+	
+	
+	
+	local y = 0
+
+	for i = #self._lines, 1, -1 do
+
+		local line = self._lines[i][1]
+		local icon = self._lines[i][2]
+		
+		local _, _, w, h = line:text_rect()
+
+		line:set_bottom(output_panel:h() - y)
+
+		if icon == 1 then
+			
+		elseif icon then
+			icon:set_top(line:top() + 1)
+		end
+		
+		for j, elem in ipairs(self._lines[i]) do
+				
+				local Emote = self._lines[i][j+2]
+				
+				if Emote then
+					if Emote:name()=="twitch_icon" then
+						Emote:set_top(line:top() + 2.5)
+					else
+					local n = tonumber(Emote:name())
+
+					Emote:set_top(line:top() + (HUDChat.line_height-1)*(n-1))  			
+
+					end
+				end
+			
+			end
+		
+		y = y + h
+
+	end
+
+	output_panel:set_bottom(self._input_panel:top())
+end
+
+function HUDChat:init(ws, hud)
+	self._ws = ws
+	self._hud_panel = hud.panel
+
+	self:set_channel_id(ChatManager.GAME)
+	list_of_files_before = SystemFS:list("mods\\TwitchIntegrationMod\\assets\\guis\\textures\\Emotes")
+	
+	for i = 1, #list_of_files_before, 1 do
+		local gs = list_of_files_before[i]:gsub(".texture", "")
+		list_of_files[gs] = gs
+	end
+	self._output_width = 320
+	self._panel_width = 500
+	self._lines = {}
+	self._esc_callback = callback(self, self, "esc_key_callback")
+	self._enter_callback = callback(self, self, "enter_key_callback")
+	self._typing_callback = 0
+	self._skip_first = false
+	self._panel = self._hud_panel:panel({
+		name = "chat_panel",
+		h = 500,
+		halign = "left",
+		x = 0,
+		valign = "bottom",
+		w = self._panel_width
+	})
+
+	self._panel:set_bottom(self._panel:parent():h() - 112)
+
+	local output_panel = self._panel:panel({
+		name = "output_panel",
+		h = 10,
+		x = 0,
+		layer = 1,
+		w = self._output_width
+	})
+
+	output_panel:gradient({
+		blend_mode = "sub",
+		name = "output_bg",
+		valign = "grow",
+		layer = -1,
+		gradient_points = {
+			0,
+			Color.white:with_alpha(0),
+			0.2,
+			Color.white:with_alpha(0.25),
+			1,
+			Color.white:with_alpha(0)
+		}
+	})
+	self:_create_input_panel()
+	self:_layout_input_panel()
+	self:_layout_output_panel()
+end
+list_of_files_before= {} 
+list_of_files={}
+
+]]
+
+
+
+
+
+
+]]

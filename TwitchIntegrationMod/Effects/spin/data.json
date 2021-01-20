@@ -1,0 +1,16 @@
+{
+	"id": "spin",
+	"Name":"Spin display",
+	"Description":"Spin your screen",
+	"TIM":
+	{
+		"Count":
+		{
+			"Name":"Number of spins",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1,
+			"maxValue":100
+		}
+	}
+}

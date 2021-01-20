@@ -1,0 +1,16 @@
+{
+	"id": "ammo",
+	"Name":"Ammo box",
+	"Description":"Spawn ammo boxes for you and your crew",
+	"TIM":
+	{
+		"count":
+		{
+			"Name":"Count",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1,
+			"maxValue":100
+		}
+	}
+}

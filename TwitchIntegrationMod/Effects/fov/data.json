@@ -1,0 +1,23 @@
+{
+	"id": "fov",
+	"Name":"Change FOV",
+	"Description":"Changes your field of view by a few seconds",
+	"TIM":
+	{
+		"Max_low":
+		{
+			"Name":"FOV (%)",
+			"Type":"NumberBox",
+			"LessThanZero":true,
+			"defaultValue":0,
+			"maxValue":100
+		},
+		"Timers_max":
+		{
+			"Name":"Time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1
+		}
+	}
+}

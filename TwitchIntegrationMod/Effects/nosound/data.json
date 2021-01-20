@@ -1,0 +1,15 @@
+{
+	"id": "nosound",
+	"Name":"No sound",
+	"Description":"Mutes the sounds of the game for a few seconds",
+	"TIM":
+	{
+		"Timers_max":
+		{
+			"Name":"Time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1
+		}
+	}
+}
