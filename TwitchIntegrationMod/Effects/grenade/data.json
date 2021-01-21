@@ -1,0 +1,16 @@
+{
+	"id": "grenade",
+	"Name":"Frag grenade",
+	"Description":"Spawn frag grenade",
+	"TIM":
+	{
+		"Count":
+		{
+			"Name":"Count",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1,
+			"maxValue":100
+		}
+	}
+}

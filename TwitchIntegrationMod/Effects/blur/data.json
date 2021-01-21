@@ -1,0 +1,15 @@
+{
+	"id": "blur",
+	"Name":"Blur",
+	"Description":"Blur your screen for few seconds",
+	"TIM":
+	{
+		"Timers_max":
+		{
+			"Name":"Time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1
+		}
+	}
+}

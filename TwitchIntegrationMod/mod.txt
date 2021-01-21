@@ -1,0 +1,38 @@
+{
+	"name" : "Twitch Integration Mod",
+	"description" : "Mod that allows you to see twitch chat messages in game and use channel points rewards to make your game more fun",
+	"author" : "TheTankDivison",
+	"version" : "1.0",
+	"blt_version" : 2,	
+	"image" : "icon.png",
+	"color" : "171 97 236",
+	"contact": "\n https://steamcommunity.com/id/TheTankDivision/",
+	"persist_scripts": 
+	[
+		{
+			"global": "Global.is_loading",
+			"script_path": "message.lua"
+		}
+	],
+ 	"keybinds" : 
+	[
+		{
+			"keybind_id" : "dsasdasdasas",
+			"name" : "test",
+			"description" : "",
+			"script_path" : "gas.lua",
+			"run_in_menu" : true,
+			"run_in_game" : true
+		}
+    	],
+	"updates" : 
+	[
+		{
+			"identifier" : "twitch_integration_mod_updates",
+			"host": 
+			{
+				"meta": "https://github.com/TheTankDivison/TwitchIntegrationMod/raw/auto-updates/meta_data.json"
+			}
+		}
+	]
+}

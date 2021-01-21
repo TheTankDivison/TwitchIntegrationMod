@@ -1,0 +1,23 @@
+{
+	"id": "tazer",
+	"Name":"Tazer",
+	"Description":"Spawn taser",
+	"TIM":
+	{
+		"Сount":
+		{
+			"Name":"Count",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1,
+			"maxValue":100
+		},
+		"immortal":
+		{
+			"Name":"Immortal time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":0
+		}
+	}
+}

@@ -1,0 +1,15 @@
+{
+	"id": "hit",
+	"Name":"No Hitmarker",
+	"Description":"Turning off hitmarker for few seconds",
+	"TIM":
+	{
+		"Timers_max":
+		{
+			"Name":"Time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1
+		}
+	}
+}
