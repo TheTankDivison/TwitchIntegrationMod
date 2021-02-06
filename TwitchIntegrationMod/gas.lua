@@ -12,8 +12,8 @@
 
 --for k, v in pairs(TIM._settings.TwitchRewards["29e35bac-648a-4264-83e3-0d18e70bb186"].effects.tazer or {}) do
 	--managers.mission._fading_debug_output:script().log(tostring(k)..tostring(v),  Color.green)
-	--managers.mission._fading_debug_output:script().log(tostring(Utils:IsInGameState()),  Color.green)
-	managers.user:set_setting("fps_cap", 60)
+	managers.mission._fading_debug_output:script().log(tostring(BotPathTW.mod_path),  Color.green)
+	--
 	
 --if TIM.tempReward["title"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value() or TIM.tempReward["prompt"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("prompt"):Value() or TIM.tempReward["cost"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("cost"):Value() or TIM.tempReward["is_enabled"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("is_enabled"):Value() or TIM.tempReward["background_color"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("background_color"):HexValue() or TIM.tempReward["max_per_stream"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value() or TIM.tempReward["max_per_user_per_stream"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value() or TIM.tempReward["global_cooldown_seconds"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value() or TIM.tempReward["should_redemptions_skip_request_queue"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value() then
 --	managers.mission._fading_debug_output:script().log(tostring(TIM.tempReward["title"]).." - "..tostring(TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value()),  Color.green)			

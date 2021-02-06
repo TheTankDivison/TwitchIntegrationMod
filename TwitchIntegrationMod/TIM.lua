@@ -1,5 +1,6 @@
 TIM = TIM or class()
-
+TIM.save_path = SavePath .. "TwitchConfig.json"
+TIM.mod_path = ModPath
 function TIM:Init()
 	TIM.InLobby = false
 	 MenuUI:new({
@@ -21,33 +22,39 @@ function TIM:Init()
 	TIM.library = library
 	TIM.BotChatActive=TIM.library.get_on_IRC()
 	TIM.BotPointsActive=TIM.library.get_on_Pubsub()
-	TIM.library.prepareAPI()
-	local file = io.open("mods/TwitchIntegrationMod/Config/config.json", "r")
+	local file = io.open(TIM.save_path, "r")
 	if file then
 		for k, v in pairs(json.decode(file:read("*all")) or {}) do
 			TIM._settings[k] = v
 		end
 		file:close()
+	else
+		file = io.open(TIM.save_path, "w")
+		if file then
+			file:write("{\"OAUTH\":\"\",\"startBotOnStart\":false, \"Nickname\":\"\", \"UserID\":\"\", \"TwitchRewards\":{}, \"enableChat\":true, \"enableChannelPoints\":true}")
+			file:close()
+		end
+		TIM:load_settings()
 	end
-
+	TIM.library.prepareAPI(TIM._settings.Nickname, TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
 	if TIM._settings.startBotOnStart == true then
-		TIM.library.start_bot()
+		TIM.library.start_bot(TIM._settings.Nickname, TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
 		TIM.BotChatActive = TIM.library.get_on_IRC()
 		TIM.BotPointsActive=TIM.library.get_on_Pubsub()
 	end
 	
 	TIM._effectsForms={}
-	local rewards_files = SystemFS:list("mods/TwitchIntegrationMod/Effects", true)
+	local rewards_files = SystemFS:list(TIM.mod_path .. "Effects", true)
 	for i = 1, #rewards_files, 1 do
 		local folder_name = rewards_files[i]
-		local dataJSON = io.open("mods/TwitchIntegrationMod/Effects/"..folder_name.."/data.json", "r")
+		local dataJSON = io.open(TIM.mod_path .. "Effects/"..folder_name.."/data.json", "r")
 		if dataJSON then
 			TIM._effectsForms[folder_name]={}
 			for k, v in pairs(json.decode(dataJSON:read("*all")) or {}) do
 				TIM._effectsForms[folder_name][k] = v
 			end
 			dataJSON:close()
-			dofile("mods/TwitchIntegrationMod/Effects/"..folder_name.."/"..folder_name..".lua")
+			dofile(TIM.mod_path .. "Effects/"..folder_name.."/"..folder_name..".lua")
 		end
 	end
 	MenuUI:new({
@@ -571,7 +578,7 @@ function TIM:CreateMainMenu(menu) --главное боковое меню
 				else
 					TIM._holder:GetItem("launchBotButton"):SetText("STOP BOT")
 					TIM:save_settings()
-					TIM.library.start_bot()
+					TIM.library.start_bot(TIM._settings.Nickname, TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
 					TIM.BotChatActive = TIM.library.get_on_IRC()
 					TIM.BotPointsActive = TIM.library.get_on_Pubsub()
 				end
@@ -909,7 +916,7 @@ end
 
 
 function TIM:save_settings()
-	local file = io.open("mods/TwitchIntegrationMod/Config/config.json", "w+")
+	local file = io.open(TIM.save_path, "w+")
 	if file then
 		file:write(json.encode(TIM._settings))
 		file:close()
@@ -917,7 +924,7 @@ function TIM:save_settings()
 end
 
 function TIM:load_settings()
-	local file = io.open("mods/TwitchIntegrationMod/Config/config.json", "r")
+	local file = io.open(TIM.save_path, "r")
 	if file then
 		for k, v in pairs(json.decode(file:read("*all")) or {}) do
 			TIM._settings[k] = v
