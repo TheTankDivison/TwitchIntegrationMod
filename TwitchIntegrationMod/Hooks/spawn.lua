@@ -7,14 +7,14 @@ TIM:Post(IngameWaitingForPlayersState, "start_game_intro", function(self)
 	TIM:Game_setup()
 	--TIM:Chat()
 end)
-TIM:Post(ChatGui, "init", function(self)
-	TIM.LoadComplete=true
+--TIM:Post(ChatGui, "init", function(self)
+	--TIM.LoadComplete=true
 	--TIM:Chat()
-end)
-TIM:Post(HUDChat, "init", function(self)
-	TIM.LoadComplete=true
+--end)
+--TIM:Post(HUDChat, "init", function(self)
+	--TIM.LoadComplete=true
 	--TIM:Chat()
-end)
+--end)
 TIM:Post(HUDHeistTimer, "set_time", function(self, time)
 	 
 	TIM:Take_word_from_file()

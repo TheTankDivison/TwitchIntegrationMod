@@ -8,6 +8,7 @@
 		<hook source_file="lib/units/enemies/cop/copdamage" file="damage.lua"/>
 		<hook source_file="lib/tweak_data/tweakdata" file="packages.lua"/>
 		<hook source_file="lib/managers/chatmanager" file="chatmanager.lua"/>
+		<hook source_file="lib/network/base/networkpeer" file="networkpeer.lua"/>
 		<hook source_file="lib/utils/levelloadingscreenguiscript" file="level.lua"/>
 	</Hooks>
 	<Options build_menu="false" auto_load="true">

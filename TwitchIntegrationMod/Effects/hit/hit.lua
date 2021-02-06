@@ -8,14 +8,11 @@ function TIM.effectsFunctions.hit(rewardID)
 	if TIM.Rewards[rewardID]== nil then
 		TIM.Rewards[rewardID]={}
 	end
-	if TIM.Rewards[rewardID].hitNow ==nil then
-		TIM.Rewards[rewardID].hitNow = 0
-	end
 	managers.player:local_player():sound():say("g60",true,true)
 	--managers.mission._fading_debug_output:script().log(tostring(TIM._settings.TwitchRewards[rewardID].effects.hit.Now),  Color.red)
-	if TIM.Rewards[rewardID].hitNow==0 then
+	if TIM.Rewards[rewardID].hitNow ==nil then
 		--TIM.Active_timer_hit=true
-		TIM.Rewards[rewardID].hitNow = TIM.Rewards[rewardID].hitNow+1
+		TIM.Rewards[rewardID].hitNow = 1
 		local lin1 = TIM.hud.panel:bitmap({
 			name = "sssss",			
 			visible = false,
@@ -37,6 +34,7 @@ function TIM.effectsFunctions.hit(rewardID)
 				wait(TIM._settings.TwitchRewards[rewardID].effects.hit.Timers_max)	
 				TIM.Rewards[rewardID].hitNow= TIM.Rewards[rewardID].hitNow - 1 			
 			end
+			TIM.Rewards[rewardID].hitNow = nil
 			managers.user:set_setting("hit_indicator", true)
 			--TIM.Active_timer_hit = false
 			lin1:parent():remove(lin1)

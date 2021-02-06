@@ -4,7 +4,7 @@
 	"Description":"Spawn Zeal sniper from Crime Spree",
 	"TIM":
 	{
-		"Сount":
+		"Count":
 		{
 			"Name":"Count",
 			"Type":"NumberBox",

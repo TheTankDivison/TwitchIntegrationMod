@@ -4,7 +4,7 @@
 	"Description":"Spawn taser",
 	"TIM":
 	{
-		"Сount":
+		"Count":
 		{
 			"Name":"Count",
 			"Type":"NumberBox",

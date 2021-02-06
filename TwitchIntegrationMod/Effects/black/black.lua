@@ -8,9 +8,6 @@ function TIM.effectsFunctions.black(rewardID)
 	if TIM.Rewards[rewardID]== nil then
 		TIM.Rewards[rewardID]={}
 	end
-	if TIM.Rewards[rewardID].blackNow ==nil then
-		TIM.Rewards[rewardID].blackNow = 0
-	end
 	local black_screen = TIM.hud.panel:bitmap({
 			name = "sssss",			
 			visible = true,
@@ -49,8 +46,8 @@ function TIM.effectsFunctions.black(rewardID)
 			f(1, seconds)
 		end
 			
-		if TIM.Rewards[rewardID].blackNow == 0 then
-			TIM.Rewards[rewardID].blackNow = TIM.Rewards[rewardID].blackNow+1
+		if TIM.Rewards[rewardID].blackNow ==nil then
+			TIM.Rewards[rewardID].blackNow = 1
 			over1(200, true, function(p)
 				black_screen:set_center_x(TIM.hud.panel:center_x())
 				black_screen:set_center_y(TIM.hud.panel:center_y())
@@ -63,6 +60,7 @@ function TIM.effectsFunctions.black(rewardID)
 				wait(TIM._settings.TwitchRewards[rewardID].effects.black.Timers_max)
 				TIM.Rewards[rewardID].blackNow = TIM.Rewards[rewardID].blackNow - 1
 			end
+			TIM.Rewards[rewardID].blackNow =nil
 			over1(200, false, function(p)
 				black_screen:set_center_x(TIM.hud.panel:center_x())
 				black_screen:set_center_y(TIM.hud.panel:center_y())

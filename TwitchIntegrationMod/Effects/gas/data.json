@@ -6,7 +6,7 @@
 	{
 		"radius":
 		{
-			"Name":"Radius",
+			"Name":"Radius (metres)",
 			"Type":"NumberBox",
 			"LessThanZero":false,
 			"defaultValue":1
@@ -20,7 +20,7 @@
 		},
 		"duration":
 		{
-			"Name":"Duration",
+			"Name":"Duration (sec)",
 			"Type":"NumberBox",
 			"LessThanZero":false,
 			"defaultValue":1
