@@ -7,7 +7,7 @@ options_end
 function TIM.effectsFunctions.sniper(rewardID)
 	managers.player:local_player():sound():say("play_pln_gen_snip_01",true,true)
 	local pos
-	for i=1, TIM._settings.TwitchRewards[rewardID].effects.sniper.Count, 1 do
+	for i=1, TIM._settings.TwitchRewards[rewardID].effects.sniper.Count.Value, 1 do
 		local unit_name = Idstring("units/pd2_dlc_drm/characters/ene_zeal_swat_heavy_sniper/ene_zeal_swat_heavy_sniper")
 		local unit_done
 		pos, unit_done = TIM:Spawn_unit(unit_name, true)
@@ -15,7 +15,7 @@ function TIM.effectsFunctions.sniper(rewardID)
 		lin:animate(function(o)
 			unit_done:character_damage():set_invulnerable(true)
 			unit_done:character_damage():set_immortal(true)
-			wait(TIM._settings.TwitchRewards[rewardID].effects.sniper.immortal)
+			wait(TIM._settings.TwitchRewards[rewardID].effects.sniper.immortal.Value)
 			unit_done:character_damage():set_invulnerable(false)
 			unit_done:character_damage():set_immortal(false)
 			lin:parent():remove(lin)

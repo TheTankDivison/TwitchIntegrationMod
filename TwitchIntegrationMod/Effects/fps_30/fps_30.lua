@@ -14,17 +14,18 @@ function TIM.effectsFunctions.fps_30(rewardID)
 		local old = managers.user:get_setting("fps_cap")
 		local lin1 = TIM:fon_function()
 		lin1:animate(function(o)
-			TIM.Rewards[rewardID].fps_30Now = 1
-			managers.user:set_setting("fps_cap", TIM._settings.TwitchRewards[rewardID].effects.fps_30.Max_low)
+			TIM.Rewards[rewardID].fps_30Now = TIM._settings.TwitchRewards[rewardID].effects.fps_30.Timers_max.Value
+			managers.user:set_setting("fps_cap", TIM._settings.TwitchRewards[rewardID].effects.fps_30.Max_low.Value)
 			while  TIM.Rewards[rewardID].fps_30Now>0  do
-				wait(TIM._settings.TwitchRewards[rewardID].effects.fps_30.Timers_max)	
-				TIM.Rewards[rewardID].fps_30Now =  TIM.Rewards[rewardID].fps_30Now  - 1 				
+				TIM.Rewards[rewardID].fps_30Now =  TIM.Rewards[rewardID].fps_30Now  - 1 
+				wait(1)	
+								
 			end
 			managers.user:set_setting("fps_cap", old)
 			TIM.Rewards[rewardID].fps_30Now = nil
 			lin1:parent():remove(lin1)
 		end)
 	else
-		 TIM.Rewards[rewardID].fps_30Now  =  TIM.Rewards[rewardID].fps_30Now  + 1
+		 TIM.Rewards[rewardID].fps_30Now  =  TIM.Rewards[rewardID].fps_30Now  + TIM._settings.TwitchRewards[rewardID].effects.fps_30.Timers_max.Value
 	end	
 end

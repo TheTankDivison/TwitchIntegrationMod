@@ -7,7 +7,7 @@ options_end
 function TIM.effectsFunctions.winters(rewardID)
 	managers.player:local_player():sound():say("cpw_a01",true,true)
 	local pos
-	for i=1,TIM._settings.TwitchRewards[rewardID].effects.winters.Count, 1 do
+	for i=1,TIM._settings.TwitchRewards[rewardID].effects.winters.Count.Value, 1 do
 		local unit_name = Idstring("units/pd2_dlc_vip/characters/ene_vip_1/ene_vip_1")
 		pos = TIM:Spawn_unit(unit_name, true)
 	end

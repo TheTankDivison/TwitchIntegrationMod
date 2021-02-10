@@ -5,7 +5,7 @@ Count:1
 options_end
 ]]
 function TIM.effectsFunctions.flash(rewardID)
-	for i=1,TIM._settings.TwitchRewards[rewardID].effects.flash.Count, 1 do
+	for i=1,TIM._settings.TwitchRewards[rewardID].effects.flash.Count.Value, 1 do
 		local duration =tweak_data.group_ai.flash_grenade_lifetime
 		local interact_TIMect = managers.player:player_unit():movement():current_state():get_interaction()
 		local lin = TIM:fon_function()

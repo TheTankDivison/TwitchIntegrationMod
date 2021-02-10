@@ -10,9 +10,9 @@ function TIM.effectsFunctions.gas(rewardID)
 		managers.player:local_player():sound():say("g42x_any",true,true)
 		local grenade = World:spawn_unit(unit_name, managers.player:local_player():position(), managers.player:local_player():rotation())
 			grenade:base():set_properties({
-			radius =  TIM._settings.TwitchRewards[rewardID].effects.gas.radius*100, --400
-			damage =  TIM._settings.TwitchRewards[rewardID].effects.gas.damage/10, --2
-			duration = TIM._settings.TwitchRewards[rewardID].effects.gas.duration --20
+			radius =  TIM._settings.TwitchRewards[rewardID].effects.gas.radius.Value*100, --400
+			damage =  TIM._settings.TwitchRewards[rewardID].effects.gas.damage.Value/10, --2
+			duration = TIM._settings.TwitchRewards[rewardID].effects.gas.duration.Value --20
 		})
 		grenade:base():detonate()
 	--end

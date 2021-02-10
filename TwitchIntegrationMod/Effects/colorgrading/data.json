@@ -1,0 +1,75 @@
+{
+	"id": "colorgrading",
+	"Name":"Change color grading",
+	"Description":"It changes your colorgrading in game for few seconds",
+	"TIM":
+	{
+		"ListOfGradings":
+		{
+			"Name":"Color grading",
+			"Type":"ComboBox",
+			"Items":
+			[
+				{
+					"name":"random",
+					"text":"Random grading"
+				},
+				{
+					"name":"color_payday",
+					"text":"Default"
+				},
+				{
+					"name":"color_heat",
+					"text":"PD1: Dinero"
+				},
+				{
+					"name":"color_nice",
+					"text":"PD1: In traffic"
+				},
+				{
+					"name":"color_bhd",
+					"text":"PD1: BHD"
+				},
+				{
+					"name":"color_xgen",
+					"text":"PD1: Xgen brown"
+				},
+				{
+					"name":"color_xxxgen",
+					"text":"PD1: Future of gaming"
+				},
+				{
+					"name":"color_matrix_classic",
+					"text":"PD1: Matrices"
+				},
+				{
+					"name":"color_sin_classic",
+					"text":"PD1: Bastard"
+				},
+				{
+					"name":"color_sepia",
+					"text":"Wild west"
+				},
+				{
+					"name":"color_sunsetstrip",
+					"text":"Max saturation"
+				},
+				{
+					"name":"color_colorful",
+					"text":"Hipster Vintage"
+				},
+				{
+					"name":"color_madplanet",
+					"text":"Mad planet"
+				}			
+			]
+		},
+		"Timers_max":
+		{
+			"Name":"Time",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1
+		}
+	}
+}

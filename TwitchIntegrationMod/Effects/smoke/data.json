@@ -11,6 +11,13 @@
 			"LessThanZero":false,
 			"defaultValue":1,
 			"maxValue":100
+		},
+		"Duration":
+		{
+			"Name":"Duration",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1
 		}
 	}
 }

@@ -12,17 +12,18 @@ function TIM.effectsFunctions.nosound(rewardID)
 	if TIM.Rewards[rewardID].nosoundNow ==nil then		
 		local lin1 = TIM:fon_function()
 		lin1:animate(function(o)
-			TIM.Rewards[rewardID].nosoundNow = 1
+			TIM.Rewards[rewardID].nosoundNow = TIM._settings.TwitchRewards[rewardID].effects.nosound.Timers_max.Value
 			SoundDevice:set_rtpc("downed_state_progression", 60)
-			while TIM.Rewards[rewardID].nosoundNow>0 do									
-				wait(TIM._settings.TwitchRewards[rewardID].effects.nosound.Timers_max)	
-				TIM.Rewards[rewardID].nosoundNow = TIM.Rewards[rewardID].nosoundNow - 1 			
+			while TIM.Rewards[rewardID].nosoundNow>0 do			
+				TIM.Rewards[rewardID].nosoundNow = TIM.Rewards[rewardID].nosoundNow - 1 	
+				wait(1)	
+						
 			end
 			SoundDevice:set_rtpc("downed_state_progression", 0)
 			TIM.Rewards[rewardID].nosoundNow =nil
 			lin1:parent():remove(lin1)
 		end)
 	else
-		TIM.Rewards[rewardID].nosoundNow = TIM.Rewards[rewardID].nosoundNow + 1
+		TIM.Rewards[rewardID].nosoundNow = TIM.Rewards[rewardID].nosoundNow + TIM._settings.TwitchRewards[rewardID].effects.nosound.Timers_max.Value
 	end	
 end

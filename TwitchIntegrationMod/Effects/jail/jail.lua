@@ -20,11 +20,11 @@ function TIM.effectsFunctions.jail(rewardID)
 		local unit_done6 = World:spawn_unit( unit_name, managers.player:local_player():position()+Vector3(100, 150, 300), Rotation(0,90,0))
 		local lin = TIM:fon_function()
 		lin:animate(function(o)
-		TIM.Rewards[rewardID].jailNow = 1
+		TIM.Rewards[rewardID].jailNow = TIM._settings.TwitchRewards[rewardID].effects.jail.Timers_max.Value
 		while TIM.Rewards[rewardID].jailNow>0 do
-			
-			wait(TIM._settings.TwitchRewards[rewardID].effects.jail.Timers_max)
 			TIM.Rewards[rewardID].jailNow = TIM.Rewards[rewardID].jailNow - 1
+			wait(1)
+			
 		end
 		TIM.Rewards[rewardID].jailNow =nil
 		managers.player:local_player():sound():say("g13",true,true)
@@ -37,6 +37,6 @@ function TIM.effectsFunctions.jail(rewardID)
 		lin:parent():remove(lin)
 	end)						
 	else
-		TIM.Rewards[rewardID].jailNow = TIM.Rewards[rewardID].jailNow + 1
+		TIM.Rewards[rewardID].jailNow = TIM.Rewards[rewardID].jailNow + TIM._settings.TwitchRewards[rewardID].effects.jail.Timers_max.Value
 	end	
 end

@@ -12,15 +12,15 @@ function TIM.effectsFunctions.fov(rewardID)
 	managers.player:local_player():sound():say("g60",true,true)
 	local old = managers.player:player_unit():camera()._camera_object:fov()
 	if TIM.Rewards[rewardID].fovNow ==nil then
-		TIM.Rewards[rewardID].fovNow = 1
+		TIM.Rewards[rewardID].fovNow = TIM._settings.TwitchRewards[rewardID].effects.fov.Timers_max.Value
 		local lin = TIM:fon_function()
 		lin:animate(function(o)
 			local fov_temp = managers.player:player_unit():camera()._camera_object:fov()
 			local fov_to
-			if (fov_temp + (fov_temp* TIM._settings.TwitchRewards[rewardID].effects.fov.Max_low/100))>=175 then
+			if (fov_temp + (fov_temp* TIM._settings.TwitchRewards[rewardID].effects.fov.Max_low.Value/100))>=175 then
 				fov_to = 174 
 			else
-				fov_to= fov_temp + (fov_temp* TIM._settings.TwitchRewards[rewardID].effects.fov.Max_low/100)
+				fov_to= fov_temp + (fov_temp* TIM._settings.TwitchRewards[rewardID].effects.fov.Max_low.Value/100)
 			end
 			over(1, function(p)
 				if not _setFOV then
@@ -33,8 +33,9 @@ function TIM.effectsFunctions.fov(rewardID)
 			end)
 			
 			while TIM.Rewards[rewardID].fovNow>0 do
-				wait(TIM._settings.TwitchRewards[rewardID].effects.fov.Timers_max)
 				TIM.Rewards[rewardID].fovNow=TIM.Rewards[rewardID].fovNow-1
+				wait(1)
+				
 			end
 			TIM.Rewards[rewardID].fovNow =nil
 			over(1, function(p)
@@ -53,6 +54,6 @@ function TIM.effectsFunctions.fov(rewardID)
 			lin:parent():remove(lin)
 		end)
 	else
-		TIM.Rewards[rewardID].fovNow=TIM.Rewards[rewardID].fovNow+1
+		TIM.Rewards[rewardID].fovNow=TIM.Rewards[rewardID].fovNow+TIM._settings.TwitchRewards[rewardID].effects.fov.Timers_max.Value
 	end	
 end

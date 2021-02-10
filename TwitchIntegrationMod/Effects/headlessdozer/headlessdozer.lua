@@ -7,7 +7,7 @@ options_end
 function TIM.effectsFunctions.headlessdozer(rewardID)
 	managers.player:local_player():sound():say("Play_ban_s02_a",true,true)
 	local pos
-	for i=1, TIM._settings.TwitchRewards[rewardID].effects.headlessdozer.Count, 1 do
+	for i=1, TIM._settings.TwitchRewards[rewardID].effects.headlessdozer.Count.Value, 1 do
 		local unit_name = Idstring("units/pd2_dlc_help/characters/ene_zeal_bulldozer_halloween/ene_zeal_bulldozer_halloween")
 		local unit_done
 		pos, unit_done = TIM:Spawn_unit(unit_name, true)
@@ -15,7 +15,7 @@ function TIM.effectsFunctions.headlessdozer(rewardID)
 		lin:animate(function(o)
 			unit_done:character_damage():set_invulnerable(true)
 			unit_done:character_damage():set_immortal(true)
-			wait(TIM._settings.TwitchRewards[rewardID].effects.headlessdozer.immortal)
+			wait(TIM._settings.TwitchRewards[rewardID].effects.headlessdozer.immortal.Value)
 			unit_done:character_damage():set_invulnerable(false)
 			unit_done:character_damage():set_immortal(false)
 			lin:parent():remove(lin)

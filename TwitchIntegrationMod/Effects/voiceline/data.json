@@ -1,0 +1,149 @@
+{
+	"id": "voiceline",
+	"Name":"Voiceline",
+	"Description":"Plays heister voiceline",
+	"TIM":
+	{
+		"ListOfLines":
+		{
+			"Name":"Voiceline",
+			"Type":"ComboBox",
+			"Items":
+			[
+				{
+					"name":"g01",
+					"text":"Downstairs"
+				},
+				{
+					"name":"g02",
+					"text":"Upstairs"
+				},
+				{
+					"name":"g03",
+					"text":"Left"
+				},
+				{
+					"name":"g04",
+					"text":"Right"
+				},
+				{
+					"name":"g05",
+					"text":"Go Up"
+				},
+				{
+					"name":"g06",
+					"text":"Go Down"
+				},
+				{
+					"name":"g07",
+					"text":"We gotta get out"
+				},
+				{
+					"name":"g08",
+					"text":"Get Inside"
+				},
+				{
+					"name":"g09",
+					"text":"Hurry"
+				},
+				{
+					"name":"g10",
+					"text":"Careful"
+				},
+				{
+					"name":"g11",
+					"text":"Wrong Way"
+				},
+				{
+					"name":"g12",
+					"text":"Right Way"
+				},
+				{
+					"name":"g13",
+					"text":"Let's Go"
+				},
+				{
+					"name":"g14",
+					"text":"This is the place"
+				},
+				{
+					"name":"g15",
+					"text":"There! (Look)"
+				},
+				{
+					"name":"g16",
+					"text":"Keep Defending"
+				},
+				{
+					"name":"g17",
+					"text":"Time to Go"
+				},
+				{
+					"name":"g18",
+					"text":"Move (Inspire Go Faster)"
+				},
+				
+				{
+					"name":"g19",
+					"text":"Go Straight"
+				},
+				{
+					"name":"g20",
+					"text":"Jump Down"
+				},
+				{
+					"name":"g21",
+					"text":"Drill Mounted"
+				},
+				{
+					"name":"g22",
+					"text":"POS Drill (Post drill repair)"
+				},
+				{
+					"name":"g23",
+					"text":"Shoot em!"
+				},
+				{
+					"name":"g24",
+					"text":"Mission Success Lines"
+				},
+				{
+					"name":"g25",
+					"text":"Take out Cameras"
+				},
+				{
+					"name":"g26",
+					"text":"Use Cable Ties"
+				},
+				{
+					"name":"g27",
+					"text":"Watch the Civilians"
+				},
+				{
+					"name":"g28",
+					"text":"Almost there! (Escape)"
+				},
+				{
+					"name":"g29",
+					"text":"FUCK!"
+				},
+				{
+					"name":"g30",
+					"text":"BullDozer Killed"
+				},
+				{
+					"name":"g43",
+					"text":"Grenade! (Throwing)"
+				},
+				{
+					"name":"g50",
+					"text":"Get ready for action (Third Person)"
+				},
+				{
+					"name":"g60",
+					"text":"SHIT!"
+				}
+			]
+		}
+	}
+}

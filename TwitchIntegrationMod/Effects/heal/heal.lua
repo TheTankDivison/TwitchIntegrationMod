@@ -11,7 +11,7 @@ function TIM.effectsFunctions.heal(rewardID)
 	--unit_name = Idstring("units/pickups/ammo/ammo_pickup")
 	--local unit_done = World:spawn_unit( unit_name, player:position(), player:rotation())
 	--player_unit:character_damage():_regenerate_armor()
-	player_unit:character_damage():restore_health(TIM._settings.TwitchRewards[rewardID].effects.heal.Percentage/100)
+	player_unit:character_damage():restore_health(TIM._settings.TwitchRewards[rewardID].effects.heal.Percentage.Value/100)
 
 	--while(hud.panel:child("gggg")) do
 	--	hud.panel:remove(hud.panel:child("gggg"))

@@ -47,7 +47,7 @@ function TIM.effectsFunctions.black(rewardID)
 		end
 			
 		if TIM.Rewards[rewardID].blackNow ==nil then
-			TIM.Rewards[rewardID].blackNow = 1
+			TIM.Rewards[rewardID].blackNow = TIM._settings.TwitchRewards[rewardID].effects.black.Timers_max.Value
 			over1(200, true, function(p)
 				black_screen:set_center_x(TIM.hud.panel:center_x())
 				black_screen:set_center_y(TIM.hud.panel:center_y())
@@ -56,9 +56,9 @@ function TIM.effectsFunctions.black(rewardID)
 				black_screen:set_alpha(math.lerp(black_screen:alpha(), 1, p))
 			end)
 			while TIM.Rewards[rewardID].blackNow>0 do
-				
-				wait(TIM._settings.TwitchRewards[rewardID].effects.black.Timers_max)
 				TIM.Rewards[rewardID].blackNow = TIM.Rewards[rewardID].blackNow - 1
+				wait(1)
+				
 			end
 			TIM.Rewards[rewardID].blackNow =nil
 			over1(200, false, function(p)
@@ -71,7 +71,7 @@ function TIM.effectsFunctions.black(rewardID)
 			
 				black_screen:parent():remove(black_screen)
 		else
-			TIM.Rewards[rewardID].blackNow = TIM.Rewards[rewardID].blackNow + 1
+			TIM.Rewards[rewardID].blackNow = TIM.Rewards[rewardID].blackNow + TIM._settings.TwitchRewards[rewardID].effects.black.Timers_max.Value
 		end
 	end)
 end

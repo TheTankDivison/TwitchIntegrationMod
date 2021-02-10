@@ -56,7 +56,7 @@ function TIM.effectsFunctions.ammo(rewardID)
 	for _, peer in pairs(all_peer) do
 		local pp = peer:unit()	
 		if pp then
-			for i=1, TIM._settings.TwitchRewards[rewardID].effects.ammo.count, 1 do
+			for i=1, TIM._settings.TwitchRewards[rewardID].effects.ammo.count.Value, 1 do
 				local unit_done = World:spawn_unit(Idstring("units/pickups/ammo/ammo_pickup"), pp:position(), pp:rotation())
 			end
 		end
