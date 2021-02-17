@@ -12,14 +12,16 @@ function TIM.effectsFunctions.blur(rewardID)
 	if TIM.Rewards[rewardID].blurNow ==nil then
 			local lin1 = TIM:fon_function()
 			lin1:animate(function(o)
-				TIM.Rewards[rewardID].blurNow= TIM._settings.TwitchRewards[rewardID].effects.blur.Timers_max.Values
-				managers.environment_controller:set_downed_value(50)
+				TIM.Rewards[rewardID].blurNow= TIM._settings.TwitchRewards[rewardID].effects.blur.Timers_max.Value
+				managers.environment_controller:set_downed_value(TIM._settings.TwitchRewards[rewardID].effects.blur.BlurMax.Value)
 				while TIM.Rewards[rewardID].blurNow>0 do
 					TIM.Rewards[rewardID].blurNow = TIM.Rewards[rewardID].blurNow - 1 
 					wait(1)
 						
 				end
-				managers.environment_controller:set_downed_value(0)
+				if Utils:IsInCustody() == true then
+					managers.environment_controller:set_downed_value(0)
+				end
 				TIM.Rewards[rewardID].blurNow =nil
 				lin1:parent():remove(lin1)
 			end)

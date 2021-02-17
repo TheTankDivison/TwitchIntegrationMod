@@ -13,7 +13,7 @@ function TIM.effectsFunctions.nosound(rewardID)
 		local lin1 = TIM:fon_function()
 		lin1:animate(function(o)
 			TIM.Rewards[rewardID].nosoundNow = TIM._settings.TwitchRewards[rewardID].effects.nosound.Timers_max.Value
-			SoundDevice:set_rtpc("downed_state_progression", 60)
+			SoundDevice:set_rtpc("downed_state_progression", TIM._settings.TwitchRewards[rewardID].effects.nosound.SoundLevel.Value)
 			while TIM.Rewards[rewardID].nosoundNow>0 do			
 				TIM.Rewards[rewardID].nosoundNow = TIM.Rewards[rewardID].nosoundNow - 1 	
 				wait(1)	

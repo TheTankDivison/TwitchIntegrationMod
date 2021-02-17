@@ -6,11 +6,20 @@ options_end
 ]]
 function TIM.effectsFunctions.shield(rewardID)
 	managers.player:local_player():sound():say("Play_ban_s03_a",true,true)
-	local pos
+	local unit_name = Idstring("units/pd2_dlc_vip/characters/ene_phalanx_1/ene_phalanx_1")
+	local pos, rot
+	local spawnType = false
+	if TIM._settings.TwitchRewards[rewardID].effects.shield.spawnType.SelectedItem == "onPlayer" then
+		spawnType = true
+	elseif TIM._settings.TwitchRewards[rewardID].effects.shield.spawnType.SelectedItem == "inFront" then
+		spawnType = false
+	else
+	
+	end
+	pos, rot = TIM:Spawn_position(spawnType)
 	for i=1,TIM._settings.TwitchRewards[rewardID].effects.shield.Count.Value, 1 do
-		local unit_name = Idstring("units/pd2_dlc_vip/characters/ene_phalanx_1/ene_phalanx_1")
-		local unit_done
-		pos, unit_done = TIM:Spawn_unit(unit_name, true)
+		
+		local unit_done = TIM:Spawn_unit(true, unit_name, pos, rot)
 		local lin = TIM:fon_function()
 		lin:animate(function(o)
 			unit_done:character_damage():set_invulnerable(true)
@@ -21,6 +30,7 @@ function TIM.effectsFunctions.shield(rewardID)
 			lin:parent():remove(lin)
 		end)
 	end
+	--[[
 	local effect_params = {
 		sound_event = "grenade_explode",
 		effect = "effects/particles/explosions/explosion_flash_grenade",
@@ -34,4 +44,5 @@ function TIM.effectsFunctions.shield(rewardID)
 		1,
 		effect_params
 	)
+	]]
 end

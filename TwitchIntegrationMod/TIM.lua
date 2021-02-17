@@ -1,6 +1,6 @@
 TIM = TIM or class()
 TIM.save_path = SavePath .. "TwitchConfig.json"
-TIM.mod_path = ModPath
+TIM.mod_path = 'mods\\TwitchIntegrationMod\\'
 function TIM:Init()
 	TIM.InLobby = false
 	 MenuUI:new({
@@ -12,7 +12,6 @@ function TIM:Init()
     })	
 	
 	TIM.LoadComplete=false
-	TIM.MessageQueue=5
 	TIM.Rewards={}
 	TIM._settings={}
 	TIM.effectsFunctions={}
@@ -37,25 +36,44 @@ function TIM:Init()
 		TIM:load_settings()
 	end
 	TIM.library.prepareAPI(TIM._settings.Nickname, TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
-	if TIM._settings.startBotOnStart == true then
+
+	if TIM._settings.startBotOnStart == true and TIM.BotChatActive == false and TIM.BotPointsActive == false then
 		TIM.library.start_bot(TIM._settings.Nickname, TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
 		TIM.BotChatActive = TIM.library.get_on_IRC()
 		TIM.BotPointsActive=TIM.library.get_on_Pubsub()
 	end
 	
 	TIM._effectsForms={}
-	local rewards_files = SystemFS:list(TIM.mod_path .. "Effects", true)
+	local rewards_files = SystemFS:list(TIM.mod_path .. 'Effects', true)
 	for i = 1, #rewards_files, 1 do
 		local folder_name = rewards_files[i]
-		local dataJSON = io.open(TIM.mod_path .. "Effects/"..folder_name.."/data.json", "r")
+		local dataJSON = io.open(TIM.mod_path .. 'Effects\\'..folder_name..'\\data.json', "r")
 		if dataJSON then
 			TIM._effectsForms[folder_name]={}
 			for k, v in pairs(json.decode(dataJSON:read("*all")) or {}) do
 				TIM._effectsForms[folder_name][k] = v
 			end
 			dataJSON:close()
-			dofile(TIM.mod_path .. "Effects/"..folder_name.."/"..folder_name..".lua")
+			dofile(TIM.mod_path .. 'Effects\\'..folder_name..'\\'..folder_name..'.lua')
 		end
+	end
+	local somethingChanged = false
+	for rewardID, rewardValue in pairs(TIM._settings.TwitchRewards or {}) do
+		for effectID, effectValue in pairs(TIM._settings.TwitchRewards[rewardID].effects or {}) do
+			for parametrID, parametrValue in pairs(TIM._effectsForms[effectID].TIM or {}) do
+				if TIM._settings.TwitchRewards[rewardID].effects[effectID][parametrID] ==nil then
+					TIM._settings.TwitchRewards[rewardID].effects[effectID][parametrID]={}
+					if TIM._effectsForms[effectID].TIM[parametrID].Type=="ComboBox" then
+						TIM._settings.TwitchRewards[rewardID].effects[effectID][parametrID].SelectedItem = TIM._effectsForms[effectID].TIM[parametrID].Items[1].name
+					end
+					TIM._settings.TwitchRewards[rewardID].effects[effectID][parametrID].Value = TIM._effectsForms[effectID].TIM[parametrID].defaultValue
+					somethingChanged = true
+				end
+			end
+		end
+	end
+	if somethingChanged == true then
+		TIM:save_settings()
 	end
 	MenuUI:new({
 		name = "ListOfEffects",
@@ -67,44 +85,154 @@ end
 
 function TIM:newRewardFunction(menu)
 	
+	TIM._rewardMenu=menu
+	TIM.tempEffects={}
+	TIM.tempEffects.effects={}
+	local _dialog_reward = TIM._rewardMenu:Menu({name = "_dialog_reward", position = "Center", align_items = "grid", w = 470, visible = true,
+		auto_height = true, auto_foreground = true, always_highlighting = true, reach_ignore_focus = false, scrollbar = true, max_height = 600,
+		size = 20, offset = 8, accent_color = BeardLib.Options:GetValue("MenuColor"), background_color = Color('3d005e'), background_alpha = 0.99,
+		align_method = "grid", border_color = Color('ffffff'), border_visible=true })
+	_dialog_reward:Divider({name = "Rewards", size = 23, text_align = "center", text = "REWARD"})
+	_dialog_reward:TextBox({name = "title", text = "Title"})
+	_dialog_reward:TextBox({name = "prompt", text = "Description"})
+	_dialog_reward:NumberBox({name = "cost", text = "Cost", filter="number", value=1,
+		on_callback = function(item)
+			item:SetValue((item.value < 1) and 1 or item.value)
+		end})
+	_dialog_reward:Toggle({name = "is_enabled", text = "Enabled", value = true})
+	_dialog_reward:ColorTextBox({name = "background_color", text = "Color", value = Color(1,1,1), use_alpha=false})			
+	_dialog_reward:NumberBox({name = "max_per_stream", text = "Max per stream", filter="number", enabled=true, value=0,
+		on_callback = function(item)
+			item:SetValue((item.value < 0) and 0 or item.value)
+		end})
+	_dialog_reward:NumberBox({name = "max_per_user_per_stream", text = "Max per user per stream", filter="number", enabled=true, value=0,
+		on_callback = function(item)
+			item:SetValue((item.value < 0) and 0 or item.value)
+		end})
+	_dialog_reward:NumberBox({name = "global_cooldown_seconds", text = "Global cooldown (minutes)", filter="number", enabled=true, value=0,
+		on_callback = function(item)
+			item:SetValue((item.value < 0) and 0 or item.value)
+		end})
+	_dialog_reward:Toggle({name = "should_redemptions_skip_request_queue", text = "Should redemptions skip request queue", value = false})
+	_dialog_reward:Button({ name = "ADD NEW EFFECT", text = "ADD NEW EFFECT", text_align = "center",
+		on_callback = function(item)
+			TIM._listEffectsMenu:Enable()
+		end})
+	_dialog_reward:Group({ name = "EffectsGroup", size = 18, text = "Effects"})
+	_dialog_reward:Divider({ name="Response", text="Response: " })
+	_dialog_reward:Button({ name = "OK", text = "OK", w = 150,
+		on_callback = function(item) --создание награды на твиче
+			local err, rewardIDtemp = TIM.library.createRew(TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value(),
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("prompt"):Value(),
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("cost"):Value(),
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("is_enabled"):Value(),
+			"#".. TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("background_color"):HexValue():upper(),
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value()>0,
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value(),
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value()>0,
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value(),
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value()>0,
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value()*60,
+			TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value())	
+			--managers.mission._fading_debug_output:script().log("1-  "..tostring(temp),  Color.green)
+			if err==true then
+				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("Response"):SetText("Response: "..rewardIDtemp)
+			else
+				local but = TIM._listChannelPointsRewards:Button({ name = tostring(rewardIDtemp), text = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value(), text_align = "left", 
+				on_callback = function(item2) --создание подгрузки данных с твича 
+					MenuUI:new({
+						name = "Reward",
+						layer=500,
+						background_blur=true, --(o, base_callback_class, base_callback_func_name, base_callback_param)
+						create_items = callback(self, self, "editRewardFunction", item2.name)
+					})
+					--TIM._rewardMenu:Enable()
+				end })
+				but:ImageButton({name = but:Name(), w=20, h=20, offset = {0,0}, texture = "guis/textures/icons/delete",
+					on_callback = function(item)
+						TIM.library.deleteRew(item.name)
+						TIM._listChannelPointsRewards:GetItem(item.name):Destroy()
+						TIM._settings.TwitchRewards[item.name]=nil
+						TIM:save_settings()
+					end})
+				TIM._settings.TwitchRewards[rewardIDtemp] ={}
+				TIM._settings.TwitchRewards[rewardIDtemp].title = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value()
+				TIM._settings.TwitchRewards[rewardIDtemp].effects=TIM.tempEffects.effects
+				TIM._rewardMenu:Destroy()
+			end
+			
+			TIM:save_settings()
+		end
+	})
+	_dialog_reward:Button({name = "Cancel", text = "Cancel", w = 150,
+		on_callback = function(item)
+			TIM._rewardMenu:Destroy()
+		end })
+	TIM._rewardMenu:Enable()
+	
+end
+
+function TIM:editRewardFunction(rewardID, menu)
+	TIM.tempReward={}
+	TIM.tempReward["rewardID"]=rewardID
+	local err, title, prompt, cost, is_enabled, background_color, is_max_per_stream_enabled, max_per_stream, is_max_per_user_per_stream_enabled, max_per_user_per_stream, is_global_cooldown_enabled, global_cooldown_seconds ,should_redemptions_skip_request_queue = TIM.library.getRew(rewardID)
+	TIM.tempReward["title"] = title
+	TIM.tempReward["prompt"] = prompt
+	TIM.tempReward["cost"] = cost
+	TIM.tempReward["is_enabled"] = is_enabled
+	TIM.tempReward["background_color"] = string.lower(string.sub(background_color,2))
+	TIM.tempReward["is_max_per_stream_enabled"] = is_max_per_stream_enabled
+	TIM.tempReward["max_per_stream"] = max_per_stream
+	TIM.tempReward["is_max_per_user_per_stream_enabled"] = is_max_per_user_per_stream_enabled
+	TIM.tempReward["max_per_user_per_stream"] = max_per_user_per_stream
+	TIM.tempReward["is_global_cooldown_enabled"] = is_global_cooldown_enabled
+	TIM.tempReward["global_cooldown_seconds"] = global_cooldown_seconds/60
+	TIM.tempReward["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue
+	if err==true then
+		if TIM._listChannelPointsRewards:GetItem(rewardID):Text():find(" - ERROR: can't load reward") then 
+		
+		else
+			TIM._listChannelPointsRewards:GetItem(rewardID):SetText( TIM._listChannelPointsRewards:GetItem(rewardID):Text().." - ERROR: can't load reward")
+		end
+	else
 		TIM._rewardMenu=menu
-		TIM.tempEffects={}
-		TIM.tempEffects.effects={}
 		local _dialog_reward = TIM._rewardMenu:Menu({name = "_dialog_reward", position = "Center", align_items = "grid", w = 470, visible = true,
 			auto_height = true, auto_foreground = true, always_highlighting = true, reach_ignore_focus = false, scrollbar = true, max_height = 600,
 			size = 20, offset = 8, accent_color = BeardLib.Options:GetValue("MenuColor"), background_color = Color('3d005e'), background_alpha = 0.99,
 			align_method = "grid", border_color = Color('ffffff'), border_visible=true })
 		_dialog_reward:Divider({name = "Rewards", size = 23, text_align = "center", text = "REWARD"})
-		_dialog_reward:TextBox({name = "title", text = "Title"})
-		_dialog_reward:TextBox({name = "prompt", text = "Description"})
-		_dialog_reward:NumberBox({name = "cost", text = "Cost", filter="number", value=1,
+		_dialog_reward:TextBox({name = "title", text = "Title", value = TIM.tempReward["title"]})
+		_dialog_reward:TextBox({name = "prompt", text = "Description", value = TIM.tempReward["prompt"]})
+		_dialog_reward:NumberBox({name = "cost", text = "Cost", filter="number", value=TIM.tempReward["cost"],
 			on_callback = function(item)
 				item:SetValue((item.value < 1) and 1 or item.value)
 			end})
-		_dialog_reward:Toggle({name = "is_enabled", text = "Enabled", value = true})
-		_dialog_reward:ColorTextBox({name = "background_color", text = "Color", value = Color(1,1,1), use_alpha=false})			
-		_dialog_reward:NumberBox({name = "max_per_stream", text = "Max per stream", filter="number", enabled=true, value=0,
+		_dialog_reward:Toggle({name = "is_enabled", text = "Enabled", value = TIM.tempReward["is_enabled"]})
+		_dialog_reward:ColorTextBox({name = "background_color", text = "Color", value = Color(TIM.tempReward["background_color"]), use_alpha=false})			
+		_dialog_reward:NumberBox({name = "max_per_stream", text = "Max per stream", filter="number", enabled=true, value=TIM.tempReward["max_per_stream"],
 			on_callback = function(item)
 				item:SetValue((item.value < 0) and 0 or item.value)
 			end})
-		_dialog_reward:NumberBox({name = "max_per_user_per_stream", text = "Max per user per stream", filter="number", enabled=true, value=0,
+		_dialog_reward:NumberBox({name = "max_per_user_per_stream", text = "Max per user per stream", filter="number", enabled=true, value=TIM.tempReward["max_per_user_per_stream"],
 			on_callback = function(item)
 				item:SetValue((item.value < 0) and 0 or item.value)
 			end})
-		_dialog_reward:NumberBox({name = "global_cooldown_seconds", text = "Global cooldown (minutes)", filter="number", enabled=true, value=0,
+		_dialog_reward:NumberBox({name = "global_cooldown_seconds", text = "Global cooldown (minutes)", filter="number", enabled=true, value=TIM.tempReward["global_cooldown_seconds"],
 			on_callback = function(item)
 				item:SetValue((item.value < 0) and 0 or item.value)
 			end})
-		_dialog_reward:Toggle({name = "should_redemptions_skip_request_queue", text = "Should redemptions skip request queue", value = false})
+		_dialog_reward:Toggle({name = "should_redemptions_skip_request_queue", text = "Should redemptions skip request queue", value = TIM.tempReward["should_redemptions_skip_request_queue"]})
 		_dialog_reward:Button({ name = "ADD NEW EFFECT", text = "ADD NEW EFFECT", text_align = "center",
 			on_callback = function(item)
 				TIM._listEffectsMenu:Enable()
 			end})
 		_dialog_reward:Group({ name = "EffectsGroup", size = 18, text = "Effects"})
-		_dialog_reward:Divider({ name="Response", text="Response: " })
 		_dialog_reward:Button({ name = "OK", text = "OK", w = 150,
-			on_callback = function(item) --создание награды на твиче
-				local err, rewardIDtemp = TIM.library.createRew(TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value(),
+		on_callback = function(item) --редактирование награды на твиче
+			local err, temp = false
+			if TIM.tempReward["title"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value() or TIM.tempReward["prompt"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("prompt"):Value() or TIM.tempReward["cost"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("cost"):Value() or TIM.tempReward["is_enabled"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("is_enabled"):Value() or TIM.tempReward["background_color"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("background_color"):HexValue() or TIM.tempReward["max_per_stream"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value() or TIM.tempReward["max_per_user_per_stream"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value() or TIM.tempReward["global_cooldown_seconds"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value() or TIM.tempReward["should_redemptions_skip_request_queue"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value() then
+				err, temp = TIM.library.editRew(TIM.tempReward["rewardID"], 
+				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value(),
 				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("prompt"):Value(),
 				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("cost"):Value(),
 				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("is_enabled"):Value(),
@@ -115,160 +243,50 @@ function TIM:newRewardFunction(menu)
 				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value(),
 				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value()>0,
 				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value()*60,
-				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value())	
-				--managers.mission._fading_debug_output:script().log("1-  "..tostring(temp),  Color.green)
-				if err==true then
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("Response"):SetText("Response: "..rewardIDtemp)
-				else
-					local but = TIM._listChannelPointsRewards:Button({ name = tostring(rewardIDtemp), text = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value(), text_align = "left", 
-					on_callback = function(item2) --создание подгрузки данных с твича 
-						MenuUI:new({
-							name = "Reward",
-							layer=500,
-							background_blur=true, --(o, base_callback_class, base_callback_func_name, base_callback_param)
-							create_items = callback(self, self, "editRewardFunction", item2.name)
-						})
-						--TIM._rewardMenu:Enable()
-					end })
-					but:ImageButton({name = but:Name(), w=20, h=20, offset = {0,0}, texture = "guis/textures/icons/delete",
-						on_callback = function(item)
-							TIM.library.deleteRew(item.name)
-							TIM._listChannelPointsRewards:GetItem(item.name):Destroy()
-							TIM._settings.TwitchRewards[item.name]=nil
-							TIM:save_settings()
-						end})
-					TIM._settings.TwitchRewards[rewardIDtemp] ={}
-					TIM._settings.TwitchRewards[rewardIDtemp].title = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value()
-					TIM._settings.TwitchRewards[rewardIDtemp].effects=TIM.tempEffects.effects
-					TIM._rewardMenu:Destroy()
-				end
+				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value())
+			end
+			if err==true then
+				TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("Response"):SetText("Response: "..temp)
+			else
+				TIM._settings.TwitchRewards[TIM.tempReward["rewardID"]].title = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value()
+				TIM._settings.TwitchRewards[TIM.tempReward["rewardID"]].effects=TIM.tempEffects.effects
+				TIM._listChannelPointsRewards:GetItem(TIM.tempReward["rewardID"]):SetText(TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value())
+				TIM.tempReward={}
+				TIM._rewardMenu:Destroy()
 				
 				TIM:save_settings()
 			end
+		end
 		})
 		_dialog_reward:Button({name = "Cancel", text = "Cancel", w = 150,
 			on_callback = function(item)
 				TIM._rewardMenu:Destroy()
 			end })
-		TIM._rewardMenu:Enable()
-	
-end
-
-function TIM:editRewardFunction(rewardID, menu)
-	 --edit existing reward
-		--managers.mission._fading_debug_output:script().log("1-  "..tostring(rewardID),  Color.green)
-		
-		TIM.tempReward={}
-		TIM.tempReward["rewardID"]=rewardID
-		local err, title, prompt, cost, is_enabled, background_color, is_max_per_stream_enabled, max_per_stream, is_max_per_user_per_stream_enabled, max_per_user_per_stream, is_global_cooldown_enabled, global_cooldown_seconds ,should_redemptions_skip_request_queue = TIM.library.getRew(rewardID)
-		TIM.tempReward["title"] = title
-		TIM.tempReward["prompt"] = prompt
-		TIM.tempReward["cost"] = cost
-		TIM.tempReward["is_enabled"] = is_enabled
-		TIM.tempReward["background_color"] = string.lower(string.sub(background_color,2))
-		TIM.tempReward["is_max_per_stream_enabled"] = is_max_per_stream_enabled
-		TIM.tempReward["max_per_stream"] = max_per_stream
-		TIM.tempReward["is_max_per_user_per_stream_enabled"] = is_max_per_user_per_stream_enabled
-		TIM.tempReward["max_per_user_per_stream"] = max_per_user_per_stream
-		TIM.tempReward["is_global_cooldown_enabled"] = is_global_cooldown_enabled
-		TIM.tempReward["global_cooldown_seconds"] = global_cooldown_seconds
-		TIM.tempReward["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue
-		if err==true then
-			if TIM._listChannelPointsRewards:GetItem(rewardID):Text():find(" - ERROR: can't load reward") then 
-			
-			else
-				TIM._listChannelPointsRewards:GetItem(rewardID):SetText( TIM._listChannelPointsRewards:GetItem(rewardID):Text().." - ERROR: can't load reward")
-			end
-		else
-			TIM._rewardMenu=menu
-			local _dialog_reward = TIM._rewardMenu:Menu({name = "_dialog_reward", position = "Center", align_items = "grid", w = 470, visible = true,
-				auto_height = true, auto_foreground = true, always_highlighting = true, reach_ignore_focus = false, scrollbar = true, max_height = 600,
-				size = 20, offset = 8, accent_color = BeardLib.Options:GetValue("MenuColor"), background_color = Color('3d005e'), background_alpha = 0.99,
-				align_method = "grid", border_color = Color('ffffff'), border_visible=true })
-			_dialog_reward:Divider({name = "Rewards", size = 23, text_align = "center", text = "REWARD"})
-			_dialog_reward:TextBox({name = "title", text = "Title", value = TIM.tempReward["title"]})
-			_dialog_reward:TextBox({name = "prompt", text = "Description", value = TIM.tempReward["prompt"]})
-			_dialog_reward:NumberBox({name = "cost", text = "Cost", filter="number", value=TIM.tempReward["cost"],
-				on_callback = function(item)
-					item:SetValue((item.value < 1) and 1 or item.value)
+		_dialog_reward:Divider({ name="Response", text="Response: " })
+		TIM.tempEffects = {}
+		TIM.tempEffects.effects = TIM._settings.TwitchRewards[rewardID].effects
+		for k1, v1 in pairs((TIM.tempEffects.effects) or {}) do
+			local but_effect = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("EffectsGroup"):Button({ name = k1, text = TIM._effectsForms[k1].Name, text_align = "left", 
+				on_callback = function(item1)								
+					MenuUI:new({
+						name = item1.name,
+						background_blur=true,
+						layer = 550,
+						create_items = callback(self, self, "CreateEffect"),
+						effect_exists=true,
+						rewardID=rewardID
+					})
+					TIM._effectFormMenu:Enable()
 				end})
-			_dialog_reward:Toggle({name = "is_enabled", text = "Enabled", value = TIM.tempReward["is_enabled"]})
-			_dialog_reward:ColorTextBox({name = "background_color", text = "Color", value = Color(TIM.tempReward["background_color"]), use_alpha=false})			
-			_dialog_reward:NumberBox({name = "max_per_stream", text = "Max per stream", filter="number", enabled=true, value=TIM.tempReward["max_per_stream"],
+			but_effect:ImageButton({ name = but_effect:Name(), w=20, h=20, offset = {0,0}, texture = "guis/textures/icons/delete",
 				on_callback = function(item)
-					item:SetValue((item.value < 0) and 0 or item.value)
-				end})
-			_dialog_reward:NumberBox({name = "max_per_user_per_stream", text = "Max per user per stream", filter="number", enabled=true, value=TIM.tempReward["max_per_user_per_stream"],
-				on_callback = function(item)
-					item:SetValue((item.value < 0) and 0 or item.value)
-				end})
-			_dialog_reward:NumberBox({name = "global_cooldown_seconds", text = "Global cooldown (minutes)", filter="number", enabled=true, value=TIM.tempReward["global_cooldown_seconds"],
-				on_callback = function(item)
-					item:SetValue((item.value < 0) and 0 or item.value)
-				end})
-			_dialog_reward:Toggle({name = "should_redemptions_skip_request_queue", text = "Should redemptions skip request queue", value = TIM.tempReward["should_redemptions_skip_request_queue"]})
-			_dialog_reward:Button({ name = "ADD NEW EFFECT", text = "ADD NEW EFFECT", text_align = "center",
-				on_callback = function(item)
-					TIM._listEffectsMenu:Enable()
-				end})
-			_dialog_reward:Group({ name = "EffectsGroup", size = 18, text = "Effects"})
-			_dialog_reward:Button({ name = "OK", text = "OK", w = 150,
-			on_callback = function(item) --редактирование награды на твиче
-				local err, temp = false
-				if TIM.tempReward["title"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value() or TIM.tempReward["prompt"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("prompt"):Value() or TIM.tempReward["cost"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("cost"):Value() or TIM.tempReward["is_enabled"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("is_enabled"):Value() or TIM.tempReward["background_color"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("background_color"):HexValue() or TIM.tempReward["max_per_stream"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value() or TIM.tempReward["max_per_user_per_stream"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value() or TIM.tempReward["global_cooldown_seconds"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value() or TIM.tempReward["should_redemptions_skip_request_queue"]~=TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value() then
-					err, temp = TIM.library.editRew(TIM.tempReward["rewardID"], 
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("title"):Value(),
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("prompt"):Value(),
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("cost"):Value(),
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("is_enabled"):Value(),
-					"#".. TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("background_color"):HexValue():upper(),
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value()>0,
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_stream"):Value(),
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value()>0,
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("max_per_user_per_stream"):Value(),
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value()>0,
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("global_cooldown_seconds"):Value()*60,
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("should_redemptions_skip_request_queue"):Value())
+					TIM.tempEffects.effects[item.name]=nil
+					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("EffectsGroup"):GetItem(item.name):Destroy()
 				end
-				if err==true then
-					TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("Response"):SetText("Response: "..temp)
-				else
-					TIM._settings.TwitchRewards[TIM.tempReward["rewardID"]].effects=TIM.tempEffects.effects
-					TIM.tempReward={}
-					TIM._rewardMenu:Destroy()
-					TIM:save_settings()
-				end
-			end
 			})
-			_dialog_reward:Button({name = "Cancel", text = "Cancel", w = 150,
-				on_callback = function(item)
-					TIM._rewardMenu:Destroy()
-				end })
-			_dialog_reward:Divider({ name="Response", text="Response: " })
-			TIM.tempEffects = {}
-			TIM.tempEffects.effects = TIM._settings.TwitchRewards[rewardID].effects
-			for k1, v1 in pairs((TIM.tempEffects.effects) or {}) do
-				local but_effect = TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("EffectsGroup"):Button({ name = k1, text = TIM._effectsForms[k1].Name, text_align = "left", 
-					on_callback = function(item1)								
-						MenuUI:new({
-							name = item1.name,
-							background_blur=true,
-							layer = 550,
-							create_items = callback(self, self, "CreateEffect"),
-							effect_exists=true,
-							rewardID=rewardID
-						})
-						TIM._effectFormMenu:Enable()
-					end})
-				but_effect:ImageButton({ name = but_effect:Name(), w=20, h=20, offset = {0,0}, texture = "guis/textures/icons/delete",
-					on_callback = function(item)
-						TIM.tempEffects.effects[item.name]=nil
-						TIM._rewardMenu:GetItem("_dialog_reward"):GetItem("EffectsGroup"):GetItem(item.name):Destroy()
-					end
-				})
-			end		
-			TIM._rewardMenu:Enable()
-		end
+		end		
+		TIM._rewardMenu:Enable()
+	end
 	
 	
 end
@@ -394,7 +412,7 @@ function TIM:CreateMainMenu(menu) --главное боковое меню
 				else
 					TIM._holder:GetItem("launchBotButton"):SetText("STOP BOT")
 					TIM:save_settings()
-					TIM.library.start_bot(TIM._settings.Nickname, TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
+					TIM.library.start_bot(string.lower(TIM._settings.Nickname), TIM._settings.OAUTH, TIM._settings.enableChat, TIM._settings.enableChannelPoints, TIM._settings.UserID)
 					TIM.BotChatActive = TIM.library.get_on_IRC()
 					TIM.BotPointsActive = TIM.library.get_on_Pubsub()
 				end
@@ -413,26 +431,18 @@ function TIM:CreateMainMenu(menu) --главное боковое меню
 			MenuUI:new({
 				name = "Reward",
 				layer=500,
-				background_blur=true, --(o, base_callback_class, base_callback_func_name, base_callback_param)
+				background_blur=true,
 				create_items = callback(self, self, "newRewardFunction")
 			})
-			--TIM._rewardMenu:Enable()
 		end })
 	TIM._listChannelPointsRewards = TIM._holder:Group({ name = "Rewards", size = 18, text = "Channel Points Rewards"})
 	for RewardID, value in pairs((TIM._settings.TwitchRewards) or {}) do --подгрузка наград из файла config и добавление их в группу
 		local but = TIM._listChannelPointsRewards:Button({ name = RewardID, text = value.title, text_align = "left", 
 			on_callback = function(item)
-				--[[if err == true then 
-					if TIM._listChannelPointsRewards:GetItem(item.name):Text():find(" - ERROR: can't load reward") then 
-					
-					else
-						TIM._listChannelPointsRewards:GetItem(item.name):SetText( TIM._listChannelPointsRewards:GetItem(item.name):Text().." - ERROR: can't load reward")
-					end
-				else]]
 					MenuUI:new({
 						name = "Reward",
 						layer=500,
-						background_blur=true, --(o, base_callback_class, base_callback_func_name, base_callback_param)
+						background_blur=true,
 						create_items = callback(self, self, "editRewardFunction", item.name)
 					})
 					
@@ -474,6 +484,7 @@ function TIM:CreateEffect(menu) --окошко редактирования эф
 	effectMenu:Divider({name = "Description",  label="effect", size = 18, text_align = "left", text = TIM._effectsForms[TIM._effectFormMenu:Param("name")].Description})
 	if TIM._effectFormMenu:Param("effect_exists")==true then
 		for k, v in pairs(TIM._effectsForms[TIM._effectFormMenu:Param("name")].TIM or {}) do
+			local val = v.defaultValue
 			if v.Type=="NumberBox" then
 				local fun
 				if v.LessThanZero==false then
@@ -506,21 +517,32 @@ function TIM:CreateEffect(menu) --окошко редактирования эф
 						end
 					end
 				end
-				effectMenu:NumberBox({name = k, text = v.Name, filter="number", value=TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k].Value,maxValue=v.maxValue, on_callback = fun})	------------------подгрузка значений			
+				
+				if TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k] then
+					val = TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k].Value
+				end
+				effectMenu:NumberBox({name = k, text = v.Name, filter="number", value=val,maxValue=v.maxValue, on_callback = fun})	------------------подгрузка значений			
 			elseif v.Type=="ComboBox" then
+				--local val = v.defaultValue
+				if TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k] then
+					val = TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k].Value
+				end
 				effectMenu:ComboBox({
 					name = k,
 					text = v.Name,
 					items = v.Items,
-					value = TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k].Value,
-					free_typing = false,
-					on_callback = function(item)
-						--item:SetValue(item:Value())
-						--managers.mission._fading_debug_output:script().log(tostring(item:SelectedItem()),  Color.green)
-						--managers.mission._fading_debug_output:script().log(tostring(item:Value()),  Color.green)
-						--log("Selected item", tostring(item:SelectedItem()))
-						--log("Index", tostring(item:Value()))
-					end
+					value = val,
+					free_typing = false
+				})
+			elseif v.Type=="Toggle" then
+				--local val = v.defaultValue
+				if TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k] then
+					val = TIM.tempEffects.effects[TIM._effectsForms[TIM._effectFormMenu:Param("name")].id][k].Value
+				end
+				effectMenu:Toggle({
+					name = k,
+					text = v.Name,
+					value = val
 				})
 			else
 			
@@ -566,6 +588,7 @@ function TIM:CreateEffect(menu) --окошко редактирования эф
 					name = k,
 					text = v.Name,
 					items = v.Items,
+					value = v.defaultValue,
 					free_typing = false,
 					on_callback = function(item)
 						--item:SetValue(item:Value())
@@ -574,6 +597,12 @@ function TIM:CreateEffect(menu) --окошко редактирования эф
 						--log("Selected item", tostring(item:SelectedItem()))
 						--log("Index", tostring(item:Value()))
 					end
+				})
+			elseif v.Type=="Toggle" then
+				effectMenu:Toggle({
+					name = k,
+					text = v.Name,
+					value = v.defaultValue
 				})
 			else
 			
@@ -729,11 +758,12 @@ function TIM:Game_setup()
 	end
 end
 
-function TIM:Spawn_unit(unit_name, bool) -- true - enemy, false - TIMect 
+function TIM:Spawn_position(onPlayer) 
 	local player_pos = managers.player:local_player():position()
-	local unit_done
-	local Aim_Pos = Utils:GetPlayerAimPos(managers.player:local_player(), 10000)
-	if bool == true then
+	
+	--local unit_done
+	if onPlayer == false then
+		local Aim_Pos = Utils:GetPlayerAimPos(managers.player:local_player(), 10000)
 		if tostring(Aim_Pos):find("Vector3") then
 			local summ_x = player_pos.x  - Aim_Pos.x
 			local summ_x_abs = math.abs(summ_x)
@@ -747,24 +777,26 @@ function TIM:Spawn_unit(unit_name, bool) -- true - enemy, false - TIMect
 			local tang = math.atan(summ_x_abs/summ_y_abs)
 			summ_x_abs=summ_c*math.sin(tang)
 			summ_y_abs=summ_c*math.cos(tang)
-			player_pos = player_pos + Vector3(summ_x_abs*sign_x, summ_y_abs*sign_y, 0)
-			unit_done = World:spawn_unit( unit_name, player_pos, Rotation(managers.player:local_player():camera():rotation():yaw()-180, 0, 0) )
-			local team_id = tweak_data.levels:get_default_team_ID( unit_done:base():char_tweak().access == "gangster" and "gangster" or "combatant" )
-			unit_done:movement():set_team( TIM.AIState:team_data( team_id ) )	
-		else
-			player_pos = managers.player:local_player():position()
-			unit_done = World:spawn_unit( unit_name, player_pos, Rotation(managers.player:local_player():camera():rotation():yaw()-180, 0, 0) )
-			local team_id = tweak_data.levels:get_default_team_ID( unit_done:base():char_tweak().access == "gangster" and "gangster" or "combatant" )
-			unit_done:movement():set_team( TIM.AIState:team_data( team_id ) )
+			player_pos = player_pos + Vector3(summ_x_abs*sign_x, summ_y_abs*sign_y, 0)	
+			player_rot = Rotation(managers.player:local_player():camera():rotation():yaw()-180, 0, 0)
 		end
-	else
-		player_pos = managers.player:local_player():position()
-		unit_done = World:spawn_unit( unit_name, player_pos, Rotation(managers.player:local_player():camera():rotation():yaw()-180, 0, 0) )
 	end
-	return player_pos, unit_done
+	--unit_done = World:spawn_unit( unit_name, player_pos, Rotation(managers.player:local_player():camera():rotation():yaw()-180, 0, 0) )
+		
+	--if enemy == true then
+		--local team_id = tweak_data.levels:get_default_team_ID( unit_done:base():char_tweak().access == "gangster" and "gangster" or "combatant" )
+		--unit_done:movement():set_team( TIM.AIState:team_data( team_id ) )		
+	--end
+	return player_pos, player_rot--, unit_done
 end
-
-
+function TIM:Spawn_unit(enemy, unit_name, pos, rot) 
+	local unit_done = World:spawn_unit( unit_name, pos, rot, 0, 0) 
+	if enemy == true then
+		local team_id = tweak_data.levels:get_default_team_ID( unit_done:base():char_tweak().access == "gangster" and "gangster" or "combatant" )
+		unit_done:movement():set_team( TIM.AIState:team_data( team_id ) )
+	end
+	return unit_done
+end
 function TIM:save_settings()
 	local file = io.open(TIM.save_path, "w+")
 	if file then
@@ -793,9 +825,7 @@ function TIM:Take_word_from_file()
 		local rew_temp = TIM.library.get_reward()
 		
 		if rew_temp ~= "NULL" then
-			--managers.mission._fading_debug_output:script().log(rew_temp,  Color.green)
 			TIM:Redeem_reward(rew_temp)
-		--	managers.mission._fading_debug_output:script().log("After Redeem_reward",  Color.green)
 		end
 	end
 end

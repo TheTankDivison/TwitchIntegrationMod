@@ -27,7 +27,9 @@ function TIM.effectsFunctions.jail(rewardID)
 			
 		end
 		TIM.Rewards[rewardID].jailNow =nil
-		managers.player:local_player():sound():say("g13",true,true)
+		if Utils:IsInCustody() == true then
+			managers.player:local_player():sound():say("g13",true,true)
+		end
 		unit_done1:set_slot(0)
 		unit_done2:set_slot(0)
 		unit_done3:set_slot(0)

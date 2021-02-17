@@ -10,6 +10,14 @@
 			"Type":"NumberBox",
 			"LessThanZero":false,
 			"defaultValue":1
+		},
+		"SoundLevel":
+		{
+			"Name":"Sound level(%)",
+			"Type":"NumberBox",
+			"LessThanZero":false,
+			"defaultValue":1,
+			"maxValue":100
 		}
 	}
 }

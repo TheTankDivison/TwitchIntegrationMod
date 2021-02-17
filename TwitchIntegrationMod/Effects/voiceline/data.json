@@ -8,6 +8,7 @@
 		{
 			"Name":"Voiceline",
 			"Type":"ComboBox",
+			"defaultValue":1,
 			"Items":
 			[
 				{

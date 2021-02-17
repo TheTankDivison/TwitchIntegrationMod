@@ -38,15 +38,17 @@ function TIM.effectsFunctions.fov(rewardID)
 				
 			end
 			TIM.Rewards[rewardID].fovNow =nil
-			over(1, function(p)
-				if not _setFOV then
-					_setFOV = Camera.set_fov 
-				end
-				function Camera:set_fov( new_fov )
-					return _setFOV(self,  math.lerp(managers.player:player_unit():camera()._camera_object:fov(), old, p))
-				end
-				managers.player:player_unit():camera()._camera_object:set_fov()
-			end)
+			if Utils:IsInCustody() == true then
+				over(1, function(p)
+					if not _setFOV then
+						_setFOV = Camera.set_fov 
+					end
+					function Camera:set_fov( new_fov )
+						return _setFOV(self,  math.lerp(managers.player:player_unit():camera()._camera_object:fov(), old, p))
+					end
+					managers.player:player_unit():camera()._camera_object:set_fov()
+				end)
+			end
 			if not _setFOV then _setFOV = Camera.set_fov end
 			function Camera:set_fov( new_fov )
 				return _setFOV(self, new_fov)

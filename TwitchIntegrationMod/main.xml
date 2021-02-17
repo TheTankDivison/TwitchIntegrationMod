@@ -46,6 +46,7 @@
 		<texture path="guis/textures/icons/broadcaster_1"/>
 		<texture path="guis/textures/icons/moderator_1"/>
 		<texture path="guis/textures/icons/ammo"/>
+		<texture path="guis/textures/icons/heal"/>
 		<texture path="safe_data/statboost1"/>
 		<texture path="safe_data/statboost2"/>
 		<texture path="safe_data/statboost3"/>

@@ -8,6 +8,7 @@
 		{
 			"Name":"Color grading",
 			"Type":"ComboBox",
+			"defaultValue": 1,
 			"Items":
 			[
 				{

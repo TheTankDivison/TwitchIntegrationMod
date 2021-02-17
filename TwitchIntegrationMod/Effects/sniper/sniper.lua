@@ -6,11 +6,21 @@ options_end
 ]]
 function TIM.effectsFunctions.sniper(rewardID)
 	managers.player:local_player():sound():say("play_pln_gen_snip_01",true,true)
-	local pos
+	local unit_name = Idstring("units/pd2_dlc_drm/characters/ene_zeal_swat_heavy_sniper/ene_zeal_swat_heavy_sniper")
+		
+	local pos, rot
+	local spawnType
+	if TIM._settings.TwitchRewards[rewardID].effects.sniper.spawnType.SelectedItem == "onPlayer" then
+		spawnType = true
+	elseif TIM._settings.TwitchRewards[rewardID].effects.sniper.spawnType.SelectedItem == "inFront" then
+		spawnType = false
+	else
+	
+	end
+	pos, rot = TIM:Spawn_position(spawnType)
 	for i=1, TIM._settings.TwitchRewards[rewardID].effects.sniper.Count.Value, 1 do
-		local unit_name = Idstring("units/pd2_dlc_drm/characters/ene_zeal_swat_heavy_sniper/ene_zeal_swat_heavy_sniper")
-		local unit_done
-		pos, unit_done = TIM:Spawn_unit(unit_name, true)
+		
+		local unit_done = TIM:Spawn_unit(true, unit_name, pos, rot)
 		local lin = TIM:fon_function()
 		lin:animate(function(o)
 			unit_done:character_damage():set_invulnerable(true)
@@ -21,6 +31,7 @@ function TIM.effectsFunctions.sniper(rewardID)
 			lin:parent():remove(lin)
 		end)
 	end
+	--[[
 	local effect_params = {
 		sound_event = "grenade_explode",
 		effect = "effects/particles/explosions/explosion_flash_grenade",
@@ -34,4 +45,5 @@ function TIM.effectsFunctions.sniper(rewardID)
 		1,
 		effect_params
 	)
+	]]
 end
