@@ -150,15 +150,15 @@ else
 			--managers.hud:show_hint({text = tostring(temp_x)})
 		end
 		--message = name..":"
-		local list_of_files_before = SystemFS:list("mods/TwitchIntegrationMod/ReadMessage/emotes")
+		local list_of_files_before = SystemFS:list("assets/mod_overrides/Twitch Integration Mod emotes")
 		if  #list_of_files_before ~= #HUDChat.list_of_files then
 			local ext = Idstring("texture")
 			for i = 1, #list_of_files_before, 1 do
 				local gs = list_of_files_before[i]:gsub(".png", "")
 				--local bb = FileManager:Has(String/Idstring ext, String/Idstring path)
-				FileManager:AddFileWithCheck(ext, Idstring("mods/TwitchIntegrationMod/ReadMessage/emotes/"..gs), "mods/TwitchIntegrationMod/ReadMessage/emotes/"..tostring(list_of_files_before[i]))			
+				FileManager:AddFileWithCheck(ext, Idstring("assets/mod_overrides/Twitch Integration Mod emotes/"..gs), "assets/mod_overrides/Twitch Integration Mod emotes/"..tostring(list_of_files_before[i]))			
 				--FileManager:LoadAsset(ext, Idstring("mods\\TwitchIntegrationMod\\Bot\\ReadMessage\\emotes"..gs), "mods\\TwitchIntegrationMod\\Bot\\ReadMessage\\emotes"..list_of_files_before[i])			
-				HUDChat.list_of_files[gs] = "mods/TwitchIntegrationMod/ReadMessage/emotes/"..gs
+				HUDChat.list_of_files[gs] = "assets/mod_overrides/Twitch Integration Mod emotes/"..gs
 			end
 		end
 		
@@ -545,15 +545,15 @@ else
 		--managers.hud:show_hint({text = tostring(temp_x)})
 	end
 	--message = name..":"
-	local list_of_files_before = SystemFS:list("mods/TwitchIntegrationMod/ReadMessage/emotes")
+	local list_of_files_before = SystemFS:list("assets/mod_overrides/Twitch Integration Mod emotes")
 	if  #list_of_files_before ~= #HUDChat.list_of_files then
 		local ext = Idstring("texture")
 		for i = 1, #list_of_files_before, 1 do
 			local gs = list_of_files_before[i]:gsub(".png", "")
 			--local bb = FileManager:Has(String/Idstring ext, String/Idstring path)
-			FileManager:AddFileWithCheck(ext, Idstring("mods/TwitchIntegrationMod/ReadMessage/emotes/"..gs), "mods/TwitchIntegrationMod/ReadMessage/emotes/"..tostring(list_of_files_before[i]))			
+			FileManager:AddFileWithCheck(ext, Idstring("assets/mod_overrides/Twitch Integration Mod emotes/"..gs), "assets/mod_overrides/Twitch Integration Mod emotes/"..tostring(list_of_files_before[i]))			
 			--FileManager:LoadAsset(ext, Idstring("mods\\TwitchIntegrationMod\\Bot\\ReadMessage\\emotes"..gs), "mods\\TwitchIntegrationMod\\Bot\\ReadMessage\\emotes"..list_of_files_before[i])			
-			HUDChat.list_of_files[gs] = "mods/TwitchIntegrationMod/ReadMessage/emotes/"..gs
+			HUDChat.list_of_files[gs] = "assets/mod_overrides/Twitch Integration Mod emotes/"..gs
 		end
 	end
 	

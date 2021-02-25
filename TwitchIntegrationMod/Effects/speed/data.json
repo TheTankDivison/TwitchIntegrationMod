@@ -18,23 +18,6 @@
 			"LessThanZero":true,
 			"defaultValue":0,
 			"maxValue":100
-		},
-		"spawnType":
-		{
-			"Name":"Spawn type",
-			"Type":"ComboBox",
-			"defaultValue":1,
-			"Items":
-			[
-				{
-					"name":"onPlayer",
-					"text":"On player"
-				},
-				{
-					"name":"inFront",
-					"text":"In front of the player"
-				}
-			]
 		}
 	}
 }
