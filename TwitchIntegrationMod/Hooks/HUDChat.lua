@@ -4,6 +4,10 @@ elseif VoidUI then
 
 elseif _G.MUIChat then
 
+elseif _G.HMH then
+
+elseif Holo then 
+
 else
 	HUDChat.list_of_files={}
 	function HUDChat:receive_message_twitch(name, message, color, badges)----------------------------------сообщение твич false

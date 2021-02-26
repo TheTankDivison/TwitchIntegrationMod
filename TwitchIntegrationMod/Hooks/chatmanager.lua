@@ -1,24 +1,4 @@
-if _G.WolfHUD then
-	function ChatManager:_receive_message_twitch(channel_id, name, message, color, badges)
-		if not self._receivers[channel_id] then
-			return
-		end
-
-		for i, receiver in ipairs(self._receivers[channel_id]) do
-			receiver:receive_message(name, message, color)
-		end
-	end
-elseif VoidUI then
-	function ChatManager:_receive_message_twitch(channel_id, name, message, color, badges)
-		if not self._receivers[channel_id] then
-			return
-		end
-
-		for i, receiver in ipairs(self._receivers[channel_id]) do
-			receiver:receive_message(name, message, color)
-		end
-	end
-elseif _G.MUIChat then
+if _G.WolfHUD or _G.HMH or VoidUI or _G.MUIChat or Holo then
 	function ChatManager:_receive_message_twitch(channel_id, name, message, color, badges)
 		if not self._receivers[channel_id] then
 			return

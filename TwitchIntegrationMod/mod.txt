@@ -10,21 +10,10 @@
 	"persist_scripts": 
 	[
 		{
-			"global": "Global.is_loading",
+			"global": "twitch",
 			"script_path": "message.lua"
 		}
 	],
- 	"keybinds" : 
-	[
-		{
-			"keybind_id" : "dsasdasdasas",
-			"name" : "test",
-			"description" : "",
-			"script_path" : "gas.lua",
-			"run_in_menu" : true,
-			"run_in_game" : true
-		}
-    	],
 	"updates" : 
 	[
 		{
