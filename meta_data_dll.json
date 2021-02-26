@@ -1,7 +1,7 @@
 [
     {
         "ident": "TwitchBotDLL",
-        "hash": "b48ef63975ed28a26e2026b46f90af0f19c87dbb49712c7365779e7139af7e1c",
+        "hash": "cf9d895fa66f5f4eaf719131d929aca31aad08055eea3e52393a733d74b3edbd",
         "patchnotes_url": "https://modworkshop.net/mod/30692#changelog",
         "download_url": "https://github.com/TheTankDivison/TwitchIntegrationMod/raw/auto-updates/TwitchBotDLL.zip"
     }
