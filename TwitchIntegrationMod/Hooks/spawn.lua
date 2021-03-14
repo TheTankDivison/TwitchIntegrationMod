@@ -1,8 +1,4 @@
 ﻿
-TIM:Post(MenuManager, "on_enter_lobby", function(self)
-	TIM:Game_setup()
-	--TIM:Chat()
-end)
 TIM:Post(IngameWaitingForPlayersState, "start_game_intro", function(self)
 	TIM:Game_setup()
 	--TIM:Chat()
@@ -17,7 +13,7 @@ end)
 --end)
 TIM:Post(HUDHeistTimer, "set_time", function(self, time)
 	 
-	TIM:Take_word_from_file()
+	--TIM:Take_word_from_file()
 end)
 
 Hooks:Add("NetworkManagerOnPeerAdded", "NetworkManagerOnPeerAdded_TW", function(peer, peer_id)

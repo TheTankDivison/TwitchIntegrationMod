@@ -11,12 +11,21 @@ function TIM.effectsFunctions.heal(rewardID)
 	--unit_name = Idstring("units/pickups/ammo/ammo_pickup")
 	--local unit_done = World:spawn_unit( unit_name, player:position(), player:rotation())
 	--player_unit:character_damage():_regenerate_armor()
-	player_unit:character_damage():restore_health(TIM._settings.TwitchRewards[rewardID].effects.heal.Percentage.Value/100)
-
+	local sound
+	local texture_name
+	if TIM._settings.TwitchRewards[rewardID].effects.heal.Percentage.Value >= 0 then
+		player_unit:character_damage():restore_health(TIM._settings.TwitchRewards[rewardID].effects.heal.Percentage.Value/100)
+		sound="sounds/heal_sound"
+		texture_name="guis/textures/icons/heal"
+	else
+		player_unit:character_damage():restore_health(player_unit:character_damage():health_ratio()*(TIM._settings.TwitchRewards[rewardID].effects.heal.Percentage.Value/100))
+		sound="sounds/damage_sound"
+		texture_name="guis/textures/icons/damage"
+	end
 	--while(hud.panel:child("gggg")) do
 	--	hud.panel:remove(hud.panel:child("gggg"))
 	--end
-	local sound="sounds/heal_sound"
+	
 	local p = managers.menu_component._main_panel
 	local name = "sound"..sound
 	if alive(p:child(name)) then
@@ -33,7 +42,7 @@ function TIM.effectsFunctions.heal(rewardID)
 	local line_one_word1 = TIM.hud.panel:bitmap({
 		name = "gggg",			
 		visible = true,
-		texture = "guis/textures/icons/heal",
+		texture = texture_name,
 		layer = 0,
 		alpha=1,
 		color = Color(1, 1, 1),
@@ -46,7 +55,7 @@ function TIM.effectsFunctions.heal(rewardID)
 	local line_one_word2 = TIM.hud.panel:bitmap({
 		name = "gggg",			
 		visible = true,
-		texture = "guis/textures/icons/heal",
+		texture = texture_name,
 		layer = 0,
 		alpha=1,
 		color = Color(1, 1, 1),
@@ -59,7 +68,7 @@ function TIM.effectsFunctions.heal(rewardID)
 	local line_one_word3 = TIM.hud.panel:bitmap({
 		name = "gggg",			
 		visible = true,
-		texture = "guis/textures/icons/heal",
+		texture = texture_name,
 		layer = 0,
 		alpha=1,
 		color = Color(1, 1, 1),
@@ -72,7 +81,7 @@ function TIM.effectsFunctions.heal(rewardID)
 	local line_one_word4 = TIM.hud.panel:bitmap({
 		name = "gggg",			
 		visible = true,
-		texture = "guis/textures/icons/heal",
+		texture = texture_name,
 		layer = 0,
 		alpha=1,
 		color = Color(1, 1, 1),
@@ -85,7 +94,7 @@ function TIM.effectsFunctions.heal(rewardID)
 	local line_one_word5 = TIM.hud.panel:bitmap({
 		name = "gggg",			
 		visible = true,
-		texture = "guis/textures/icons/heal",
+		texture = texture_name,
 		layer = 0,
 		alpha=1,
 		color = Color(1, 1, 1),

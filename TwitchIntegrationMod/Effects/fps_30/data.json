@@ -8,14 +8,14 @@
 		{
 			"Name":"Time",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":1
 		},
 		"Max_low":
 		{
 			"Name":"FPS",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":30,
 			"maxValue":500
 		}

@@ -1,0 +1,22 @@
+{
+	"id": "tase",
+	"Name":"Tase player",
+	"Description":"Tase player for a few seconds",
+	"TIM":
+	{
+		"Timers_max":
+		{
+			"Name":"Time",
+			"Type":"NumberBox",
+			"minValue":0,
+			"defaultValue":0,
+			"maxValue":9
+		},
+		"incasing":
+		{
+			"Name":"Allow this in casing mode",
+			"Type":"Toggle",
+			"defaultValue":false
+		}
+	}
+}

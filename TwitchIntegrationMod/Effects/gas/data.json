@@ -8,21 +8,21 @@
 		{
 			"Name":"Radius (metres)",
 			"Type":"NumberBox",
-			"LessThanZero":false,
-			"defaultValue":1
+			"minValue":1,
+			"defaultValue":3
 		},
 		"damage":
 		{
 			"Name":"Damage",
 			"Type":"NumberBox",
-			"LessThanZero":false,
-			"defaultValue":0
+			"minValue":0,
+			"defaultValue":1
 		},
 		"duration":
 		{
 			"Name":"Duration (sec)",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":1
 		},
 		"spawnType":

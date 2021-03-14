@@ -1,22 +1,22 @@
 {
 	"id": "headlessdozer",
-	"Name":"Headless Dozer",
-	"Description":"Spawn Headless Dozer",
+	"Name":"Dozer",
+	"Description":"Spawn Dozer",
 	"TIM":
 	{
 		"Count":
 		{
 			"Name":"Count",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":1,
-			"maxValue":100
+			"maxValue":15
 		},
 		"immortal":
 		{
 			"Name":"Immortal time",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":0,
 			"defaultValue":0
 		},
 		"spawnType":
@@ -33,6 +33,39 @@
 				{
 					"name":"inFront",
 					"text":"In front of the player"
+				}
+			]
+		},
+		"dozerType":
+		{
+			"Name":"Dozer type",
+			"Type":"ComboBox",
+			"defaultValue":1,
+			"Items":
+			[
+				{
+					"name":"units/payday2/characters/ene_bulldozer_1/ene_bulldozer_1",
+					"text":"Green dozer"
+				},
+				{
+					"name":"units/payday2/characters/ene_bulldozer_2/ene_bulldozer_2",
+					"text":"Black dozer"
+				},
+				{
+					"name":"units/payday2/characters/ene_bulldozer_3/ene_bulldozer_3",
+					"text":"Skull dozer"
+				},
+				{
+					"name":"units/pd2_dlc_drm/characters/ene_bulldozer_medic/ene_bulldozer_medic",
+					"text":"Medic dozer"
+				},
+				{
+					"name":"units/pd2_dlc_drm/characters/ene_bulldozer_minigun/ene_bulldozer_minigun",
+					"text":"Minigun dozer"
+				},
+				{  
+					"name":"units/pd2_dlc_help/characters/ene_zeal_bulldozer_halloween/ene_zeal_bulldozer_halloween",
+					"text":"Headless dozer"
 				}
 			]
 		}

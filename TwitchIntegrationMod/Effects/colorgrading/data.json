@@ -69,7 +69,7 @@
 		{
 			"Name":"Time",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":1
 		}
 	}

@@ -6,7 +6,7 @@ options_end
 ]]
 function TIM.effectsFunctions.headlessdozer(rewardID)
 	managers.player:local_player():sound():say("Play_ban_s02_a",true,true)
-	local unit_name = Idstring("units/pd2_dlc_help/characters/ene_zeal_bulldozer_halloween/ene_zeal_bulldozer_halloween")
+	local unit_name = Idstring(TIM._settings.TwitchRewards[rewardID].effects.headlessdozer.dozerType.SelectedItem)--"units/pd2_dlc_help/characters/ene_zeal_bulldozer_halloween/ene_zeal_bulldozer_halloween"
 	local pos, rot
 	local spawnType = false
 	if TIM._settings.TwitchRewards[rewardID].effects.headlessdozer.spawnType.SelectedItem == "onPlayer" then

@@ -2,11 +2,13 @@ if _G.WolfHUD then
 
 elseif VoidUI then
 
-elseif _G.MUIChat then
+elseif _G.MUIMenu then
 
 elseif _G.HMH then
 
 elseif Holo then 
+
+elseif _G.VHUDPlus then
 
 else
 	HUDChat.list_of_files={}

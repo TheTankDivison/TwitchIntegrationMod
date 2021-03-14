@@ -12,7 +12,7 @@ function TIM.effectsFunctions.black(rewardID)
 			name = "sssss",			
 			visible = true,
 			texture = "guis/textures/black",
-			layer = TIM.hud.panel:layer()+15,
+			layer = -3,
 			alpha=0,
 			color = Color(1, 1, 1),
 			w = TIM.hud.panel:w()*5,

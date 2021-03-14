@@ -1,22 +1,22 @@
 {
 	"id": "shield",
 	"Name":"Shield",
-	"Description":"Spawn shield from Winters group",
+	"Description":"Spawn shield of chosen type",
 	"TIM":
 	{
 		"Count":
 		{
 			"Name":"Count",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":1,
-			"maxValue":100
+			"maxValue":15
 		},
 		"immortal":
 		{
 			"Name":"Immortal time",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":0,
 			"defaultValue":0
 		},
 		"spawnType":
@@ -33,6 +33,23 @@
 				{
 					"name":"inFront",
 					"text":"In front of the player"
+				}
+			]
+		},
+		"shieldType":
+		{
+			"Name":"Shield type",
+			"Type":"ComboBox",
+			"defaultValue":1,
+			"Items":
+			[
+				{
+					"name":"units/payday2/characters/ene_city_shield/ene_city_shield",
+					"text":"City shield"
+				},
+				{
+					"name":"units/pd2_dlc_vip/characters/ene_phalanx_1/ene_phalanx_1",
+					"text":"Winters shield"
 				}
 			]
 		}

@@ -6,7 +6,7 @@ options_end
 ]]
 function TIM.effectsFunctions.shield(rewardID)
 	managers.player:local_player():sound():say("Play_ban_s03_a",true,true)
-	local unit_name = Idstring("units/pd2_dlc_vip/characters/ene_phalanx_1/ene_phalanx_1")
+	local unit_name = Idstring(TIM._settings.TwitchRewards[rewardID].effects.shield.shieldType.SelectedItem)
 	local pos, rot
 	local spawnType = false
 	if TIM._settings.TwitchRewards[rewardID].effects.shield.spawnType.SelectedItem == "onPlayer" then

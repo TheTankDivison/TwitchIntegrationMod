@@ -15,7 +15,7 @@ function TIM.effectsFunctions.spin(rewardID)
 		TIM.Active_spin = true
 		camera:camera_unit():base():set_target_tilt(-360*TIM._settings.TwitchRewards[rewardID].effects.spin.Count.Value)
 		wait(1.25*TIM._settings.TwitchRewards[rewardID].effects.spin.Count.Value)
-		if Utils:IsInCustody() == true then
+		if Utils:IsInCustody() ~= true then
 			camera:camera_unit():base():set_target_tilt(0)
 		end
 		wait(1.25*TIM._settings.TwitchRewards[rewardID].effects.spin.Count.Value)

@@ -1,0 +1,57 @@
+{
+	"id": "timeofday",
+	"Name":"Time of day",
+	"Description":"Changes time of day for a few seconds",
+	"TIM":
+	{
+		"Timer":
+		{
+			"Name":"Timer",
+			"Type":"NumberBox",
+			"minValue":1,
+			"defaultValue":1
+		},
+		"timeType":
+		{
+			"Name":"Time type",
+			"Type":"ComboBox",
+			"defaultValue":1,
+			"Items":
+			[
+				{
+					"name":"environments/pd2_env_hox_02/pd2_env_hox_02",
+					"text":"Early morning"
+				},
+				{
+					"name":"environments/pd2_env_morning_02/pd2_env_morning_02",
+					"text":"Morning"
+				},
+				{
+					"name":"environments/pd2_env_mid_day/pd2_env_mid_day",
+					"text":"Mid day"
+				},
+				{
+					"name":"environments/pd2_env_afternoon/pd2_env_afternoon",
+					"text":"Afternoon"
+				},
+				{
+					"name":"environments/pd2_env_n2/pd2_env_n2",
+					"text":"Night"
+				},
+				{
+					"name":"environments/pd2_env_arm_hcm_02/pd2_env_arm_hcm_02",
+					"text":"Misty night"
+				},
+				{
+					"name":"environments/pd2_env_foggy_bright/pd2_env_foggy_bright",
+					"text":"Foggy night"
+				},
+				{
+					"name":"random",
+					"text":"Random"
+				}
+			]
+		}
+	}
+}
+

@@ -1,0 +1,3 @@
+function CoreEnvironmentControllerManager:get_downed_value()
+	return self._downed_value
+end

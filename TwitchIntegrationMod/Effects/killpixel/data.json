@@ -1,0 +1,22 @@
+{
+	"id": "killpixel",
+	"Name":"Dead pixels",
+	"Description":"Kills random pixels or recover them for whole heist",
+	"TIM":
+	{
+		"Count":
+		{
+			"Name":"Count",
+			"Type":"NumberBox",
+			"minValue":1,
+			"defaultValue":1,
+			"maxValue":100
+		},
+		"kill":
+		{
+			"Name":"Recover",
+			"Type":"Toggle",
+			"defaultValue":false
+		}
+	}
+}

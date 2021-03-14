@@ -14,7 +14,7 @@ function TIM.effectsFunctions.flash(rewardID)
 	
 	end
 	local pos, rot = TIM:Spawn_position(spawnType)
-	if TIM._settings.TwitchRewards[rewardID].effects.flash.instantly.Value==true then
+	if TIM._settings.TwitchRewards[rewardID].effects.flash.instantly then
 		local flashbang_unit = "units/payday2/weapons/wpn_frag_flashbang/wpn_frag_flashbang"
 		local rotation = Rotation(math.random() * 360, 0, 0)
 		local flash_grenade = World:spawn_unit(Idstring(flashbang_unit), pos, rot)

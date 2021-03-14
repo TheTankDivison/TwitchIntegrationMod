@@ -6,17 +6,17 @@
 	{
 		"Max_low":
 		{
-			"Name":"FOV (%)",
+			"Name":"FOV (degrees)",
 			"Type":"NumberBox",
-			"LessThanZero":true,
-			"defaultValue":0,
-			"maxValue":100
+			"minValue":1,
+			"defaultValue":100,
+			"maxValue":175
 		},
 		"Timers_max":
 		{
 			"Name":"Time",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":1,
 			"defaultValue":1
 		}
 	}

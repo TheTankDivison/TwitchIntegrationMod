@@ -1,14 +1,14 @@
 {
 	"id": "heal",
-	"Name":"Heal",
-	"Description":"Heals you by a few percent",
+	"Name":"Kill or Heal",
+	"Description":"Heals you or damages you by a few percent",
 	"TIM":
 	{
 		"Percentage":
 		{
 			"Name":"Percentage",
 			"Type":"NumberBox",
-			"LessThanZero":false,
+			"minValue":-100,
 			"defaultValue":1,
 			"maxValue":100
 		}

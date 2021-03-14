@@ -1,4 +1,4 @@
-
+--[[
 if managers.network:session() then
 	if TIM.LoadComplete==true or managers.network:session():local_peer():in_lobby()==true then
 		if TIM.BotChatActive == true or TIM.BotPointsActive==true then
@@ -9,3 +9,6 @@ if managers.network:session() then
 		end
 	end
 end
+]]
+TIM:Reward_co_resume()
+TIM:Chat_co_resume()

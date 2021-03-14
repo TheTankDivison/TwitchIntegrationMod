@@ -10,6 +10,11 @@
 		<hook source_file="lib/managers/chatmanager" file="chatmanager.lua"/>
 		<hook source_file="lib/network/base/networkpeer" file="networkpeer.lua"/>
 		<hook source_file="lib/utils/levelloadingscreenguiscript" file="level.lua"/>
+		<hook source_file="lib/managers/group_ai_states/groupaistatebase" file="groupai.lua"/>
+		<hook source_file="lib/managers/group_ai_states/groupaistatebesiege" file="groupbesiege.lua"/>
+		<hook source_file="lib/network/base/basenetworksession" file="network.lua"/>
+		<hook source_file="lib/managers/statisticsmanager" file="statisticsmanager.lua"/>
+		<hook source_file="core/lib/managers/coreenvironmentcontrollermanager" file="coreenvironment.lua"/>
 	</Hooks>
 	<Options build_menu="false" auto_load="true">
 		<options>
@@ -27,6 +32,7 @@
 		<png path="guis/textures/icons/settings"/>
 		<bik path="sounds/heal_sound"/>
 		<bik path="sounds/ammo_sound"/>
+		<bik path="sounds/damage_sound"/>
 		<bik path="safe_data/common-1"/>
 		<bik path="safe_data/epic-1"/>
 		<bik path="safe_data/legend-1"/>
@@ -47,6 +53,7 @@
 		<texture path="guis/textures/icons/moderator_1"/>
 		<texture path="guis/textures/icons/ammo"/>
 		<texture path="guis/textures/icons/heal"/>
+		<texture path="guis/textures/icons/damage"/>
 		<texture path="safe_data/statboost1"/>
 		<texture path="safe_data/statboost2"/>
 		<texture path="safe_data/statboost3"/>

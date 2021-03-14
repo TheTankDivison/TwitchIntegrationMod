@@ -1,4 +1,4 @@
-if _G.WolfHUD or _G.HMH or VoidUI or _G.MUIChat or Holo then
+if _G.WolfHUD or _G.HMH or VoidUI or _G.MUIMenu or Holo or _G.VHUDPlus then
 	function ChatManager:_receive_message_twitch(channel_id, name, message, color, badges)
 		if not self._receivers[channel_id] then
 			return

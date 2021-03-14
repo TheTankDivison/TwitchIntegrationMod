@@ -22,6 +22,9 @@ function TIM.effectsFunctions.cloaker(rewardID)
 		
 
 		local unit_done = TIM:Spawn_unit(true, unit_name, pos, rot)
+		if TIM._settings.TwitchRewards[rewardID].effects.cloaker.headless then
+			unit_done:damage():run_sequence_simple("dismember_head")
+		end
 		local lin = TIM:fon_function()
 		lin:animate(function(o)
 			unit_done:character_damage():set_invulnerable(true)
